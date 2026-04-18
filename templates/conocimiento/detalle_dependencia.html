@@ -1,0 +1,77 @@
+{% extends 'base.html' %} {% block title %}{{ dep.sigla }} — {{ dep.nombre }}{%
+endblock %} {% block content %}
+<div class="container">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'lista_dependencias' %}">Dependencias</a>
+      </li>
+      <li class="breadcrumb-item active">{{ dep.sigla }}</li>
+    </ol>
+  </nav>
+
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-header d-flex align-items-center gap-3">
+      <span class="badge bg-success fs-5">{{ dep.sigla }}</span>
+      <div>
+        <h4 class="mb-0">{{ dep.nombre }}</h4>
+        {% if dep.email_contacto or dep.telefono %}
+        <small class="text-muted">
+          {% if dep.email_contacto %}<i class="bi bi-envelope me-1"></i>{{
+          dep.email_contacto }}{% endif %} {% if dep.telefono
+          %}&nbsp;&bull;&nbsp;<i class="bi bi-telephone me-1"></i>{{
+          dep.telefono }}{% endif %}
+        </small>
+        {% endif %}
+      </div>
+    </div>
+    <div class="card-body">
+      <p>{{ dep.descripcion }}</p>
+      <h6 class="fw-bold text-uppercase text-muted small mb-2">Competencias</h6>
+      <ul class="mb-3">
+        {% for comp in dep.competencias.split %}
+        <li>{{ comp|cut:";" }}</li>
+        {% endfor %}
+      </ul>
+      <h6 class="fw-bold text-uppercase text-muted small mb-2">
+        Palabras clave (para IA)
+      </h6>
+      <div>
+        {% for kw in dep.keywords_lista %}
+        <span class="badge bg-light text-dark border me-1 mb-1">{{ kw }}</span>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <h5 class="fw-bold mb-3">
+    <i class="bi bi-archive me-2"></i>Banco de Precedentes ({{ precedentes.count
+    }})
+  </h5>
+  {% for prec in precedentes %}
+  <div class="card border-0 shadow-sm mb-3">
+    <div class="card-header d-flex justify-content-between">
+      <span class="badge bg-secondary">{{ prec.get_tipo_pqrsd_display }}</span>
+      <small class="text-muted"
+        ><i class="bi bi-hand-thumbs-up me-1"></i>Usado {{ prec.usado_veces }}
+        veces</small
+      >
+    </div>
+    <div class="card-body">
+      <p class="fw-bold mb-1">{{ prec.pregunta_frecuente }}</p>
+      <p class="text-muted mb-1">{{ prec.respuesta_base }}</p>
+      {% if prec.normativa_aplicable %}
+      <small class="text-muted"
+        ><i class="bi bi-journal-text me-1"></i>{{ prec.normativa_aplicable
+        }}</small
+      >
+      {% endif %}
+    </div>
+  </div>
+  {% empty %}
+  <div class="alert alert-light border">
+    Aún no hay precedentes registrados para esta dependencia.
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

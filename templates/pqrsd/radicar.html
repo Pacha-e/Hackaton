@@ -1,0 +1,89 @@
+{% extends 'base.html' %} {% load crispy_forms_tags %} {% block title %}Radicar
+PQRSD{% endblock %} {% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
+          <li class="breadcrumb-item active">Radicar solicitud</li>
+        </ol>
+      </nav>
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-success text-white">
+          <h4 class="mb-0">
+            <i class="bi bi-pencil-square me-2"></i>Radicar Petición, Queja,
+            Reclamo, Sugerencia o Denuncia
+          </h4>
+        </div>
+        <div class="card-body p-4">
+          <div class="alert alert-warning d-flex align-items-start mb-4">
+            <i class="bi bi-shield-lock me-2 mt-1"></i>
+            <small
+              >Sus datos personales serán tratados conforme a la Ley 1581/2012 y
+              el Decreto Municipal 883/2015. Si prefiere no revelar su
+              identidad, marque la opción "Anónimo".</small
+            >
+          </div>
+          <form method="post" enctype="multipart/form-data" novalidate>
+            {% csrf_token %}
+            <h6 class="text-muted fw-bold mb-3 text-uppercase">
+              Tipo de solicitud
+            </h6>
+            {{ form.tipo|as_crispy_field }} {{
+            form.canal_entrada|as_crispy_field }} {{
+            form.anonimo|as_crispy_field }}
+
+            <hr class="my-3" />
+            <h6 class="text-muted fw-bold mb-3 text-uppercase">
+              Datos del ciudadano
+            </h6>
+            <div class="row">
+              <div class="col-md-6">
+                {{ form.nombre_ciudadano|as_crispy_field }}
+              </div>
+              <div class="col-md-6">
+                {{ form.documento_ciudadano|as_crispy_field }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                {{ form.email_ciudadano|as_crispy_field }}
+              </div>
+              <div class="col-md-6">
+                {{ form.telefono_ciudadano|as_crispy_field }}
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">{{ form.comuna|as_crispy_field }}</div>
+              <div class="col-md-6">{{ form.barrio|as_crispy_field }}</div>
+            </div>
+
+            <hr class="my-3" />
+            <h6 class="text-muted fw-bold mb-3 text-uppercase">
+              Descripción de la solicitud
+            </h6>
+            {{ form.asunto|as_crispy_field }} {{
+            form.descripcion|as_crispy_field }} {{
+            form.archivo_adjunto|as_crispy_field }}
+
+            <hr class="my-3" />
+            {{ form.acepta_politica|as_crispy_field }}
+
+            <div class="d-flex gap-2 mt-3">
+              <button type="submit" class="btn btn-success btn-lg">
+                <i class="bi bi-send me-1"></i> Radicar solicitud
+              </button>
+              <a
+                href="{% url 'home' %}"
+                class="btn btn-outline-secondary btn-lg"
+                >Cancelar</a
+              >
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,176 @@
+{% extends 'base.html' %} {% block title %}Síntesis — {{ pqrsd.radicado }}{%
+endblock %} {% block content %}
+<div class="container">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'funcionarios:dashboard' %}">Dashboard</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'funcionarios:detalle_pqrsd' pqrsd.pk %}"
+          >{{ pqrsd.radicado }}</a
+        >
+      </li>
+      <li class="breadcrumb-item active">Síntesis</li>
+    </ol>
+  </nav>
+
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0">
+      <i class="bi bi-file-text me-2"></i>Síntesis Estructurada
+    </h3>
+    <span class="badge bg-{{ pqrsd.get_estado_badge }} fs-6"
+      >{{ pqrsd.get_estado_display }}</span
+    >
+  </div>
+
+  {% if sintesis.generado_por_ia %}
+  <div class="alert alert-warning d-flex align-items-center mb-4">
+    <i class="bi bi-robot me-2 fs-5"></i>
+    <div>
+      <strong>Generado por IA (Gemini 1.5 Flash).</strong> Esta síntesis es una
+      ayuda para el funcionario — no reemplaza el criterio profesional ni tiene
+      efecto jurídico propio. Verifique antes de actuar.
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Capa 1: Resumen ejecutivo -->
+  <div
+    class="card border-0 shadow-sm mb-3"
+    style="border-left: 5px solid #00a859 !important"
+  >
+    <div class="card-header bg-success bg-opacity-10">
+      <h6 class="mb-0 text-success">
+        <i class="bi bi-1-circle-fill me-2"></i>Capa 1 — Resumen Ejecutivo
+      </h6>
+      <small class="text-muted">Lo que necesita saber en 10 segundos</small>
+    </div>
+    <div class="card-body">
+      <p class="fs-5 mb-0">{{ sintesis.resumen_ejecutivo }}</p>
+    </div>
+  </div>
+
+  <!-- Capa 2: Datos estructurados -->
+  <div
+    class="card border-0 shadow-sm mb-3"
+    style="border-left: 5px solid #0d6efd !important"
+  >
+    <div class="card-header bg-primary bg-opacity-10">
+      <h6 class="mb-0 text-primary">
+        <i class="bi bi-2-circle-fill me-2"></i>Capa 2 — Datos Estructurados
+      </h6>
+      <small class="text-muted"
+        >Problema, acción requerida y contexto clave</small
+      >
+    </div>
+    <div class="card-body">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label fw-bold text-muted text-uppercase small"
+            >Problema central</label
+          >
+          <p>{{ sintesis.problema_central }}</p>
+        </div>
+        <div class="col-md-6">
+          <label class="form-label fw-bold text-muted text-uppercase small"
+            >Acción requerida</label
+          >
+          <p class="fw-bold text-primary">{{ sintesis.accion_requerida }}</p>
+        </div>
+      </div>
+      {% if sintesis.datos_contextuales %}
+      <hr />
+      <label class="form-label fw-bold text-muted text-uppercase small"
+        >Datos contextuales</label
+      >
+      <div class="row g-2">
+        {% for key, val in sintesis.datos_contextuales.items %} {% if val %}
+        <div class="col-6 col-md-3">
+          <small class="text-muted d-block text-capitalize"
+            >{{ key|cut:"_" }}</small
+          >
+          <strong>{{ val }}</strong>
+        </div>
+        {% endif %} {% endfor %}
+      </div>
+      {% endif %} {% if sintesis.entidades_mencionadas %}
+      <hr />
+      <label class="form-label fw-bold text-muted text-uppercase small"
+        >Entidades mencionadas</label
+      >
+      <div>
+        {% for e in sintesis.entidades_mencionadas %}
+        <span class="badge bg-light text-dark border me-1">{{ e }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Capa 3: Análisis jurídico y precedentes -->
+  <div
+    class="card border-0 shadow-sm mb-4"
+    style="border-left: 5px solid #6f42c1 !important"
+  >
+    <div
+      class="card-header bg-purple bg-opacity-10"
+      style="background-color: #f3eeff"
+    >
+      <h6 class="mb-0" style="color: #6f42c1">
+        <i class="bi bi-3-circle-fill me-2"></i>Capa 3 — Análisis Jurídico y
+        Precedentes
+      </h6>
+      <small class="text-muted"
+        >Normativa aplicable y casos similares anteriores</small
+      >
+    </div>
+    <div class="card-body">
+      {% if sintesis.normativa_aplicable %}
+      <label class="form-label fw-bold text-muted text-uppercase small"
+        >Normativa aplicable</label
+      >
+      <p>{{ sintesis.normativa_aplicable }}</p>
+      {% endif %} {% if sintesis.recomendacion_respuesta %}
+      <label class="form-label fw-bold text-muted text-uppercase small"
+        >Recomendación de respuesta</label
+      >
+      <div class="alert alert-light border">
+        {{ sintesis.recomendacion_respuesta }}
+      </div>
+      {% endif %} {% if sintesis.precedentes_similares.all %}
+      <label class="form-label fw-bold text-muted text-uppercase small"
+        >Precedentes similares</label
+      >
+      {% for prec in sintesis.precedentes_similares.all %}
+      <div class="card mb-2 border-0 bg-light">
+        <div class="card-body py-2">
+          <small class="fw-bold"
+            >{{ prec.dependencia.sigla }} — {{ prec.get_tipo_pqrsd_display
+            }}</small
+          >
+          <p class="mb-1 small">{{ prec.pregunta_frecuente }}</p>
+          <p class="mb-0 text-muted small">
+            {{ prec.respuesta_base|truncatewords:30 }}
+          </p>
+        </div>
+      </div>
+      {% endfor %} {% else %}
+      <p class="text-muted small mb-0">
+        No se encontraron precedentes similares registrados para esta
+        dependencia y tipo.
+      </p>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="d-flex gap-2">
+    <a
+      href="{% url 'funcionarios:detalle_pqrsd' pqrsd.pk %}"
+      class="btn btn-outline-secondary"
+    >
+      <i class="bi bi-arrow-left me-1"></i>Volver al detalle
+    </a>
+  </div>
+</div>
+{% endblock %}

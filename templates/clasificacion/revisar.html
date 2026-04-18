@@ -1,0 +1,218 @@
+{% extends 'base.html' %} {% block title %}Clasificar IA — {{ pqrsd.radicado
+}}{% endblock %} {% block content %}
+<div class="container">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'funcionarios:dashboard' %}">Dashboard</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'funcionarios:detalle_pqrsd' pqrsd.pk %}"
+          >{{ pqrsd.radicado }}</a
+        >
+      </li>
+      <li class="breadcrumb-item active">Clasificar</li>
+    </ol>
+  </nav>
+
+  <h3 class="fw-bold mb-4">
+    <i class="bi bi-cpu me-2"></i>Revisión de Clasificación IA
+  </h3>
+
+  <div class="alert alert-warning d-flex align-items-start mb-4">
+    <i class="bi bi-exclamation-triangle-fill me-2 mt-1 fs-5"></i>
+    <div>
+      <strong>Clasificación sugerida — requiere validación humana.</strong
+      ><br />
+      La IA analiza el texto y sugiere una dependencia y tipo. El funcionario
+      enlace o asesor jurídico
+      <strong>debe confirmar o corregir</strong> antes de que la solicitud
+      avance. Ninguna decisión con efecto jurídico es tomada automáticamente
+      (Ley 1755/2015).
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <!-- Sugerencia IA -->
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-warning bg-opacity-10">
+          <h6 class="mb-0">
+            <i class="bi bi-robot me-2"></i>Sugerencia de Gemini 1.5 Flash
+          </h6>
+          <small class="text-muted"
+            >Modelo: {{ clasificacion.modelo_usado }} &bull; {{
+            clasificacion.fecha_clasificacion|date:"d/m/Y H:i" }}</small
+          >
+        </div>
+        <div class="card-body">
+          <div class="mb-3">
+            <label class="text-muted small text-uppercase fw-bold"
+              >Dependencia sugerida</label
+            >
+            <p class="fs-5 fw-bold mb-0">
+              {% if pqrsd.dependencia_sugerida %} {{
+              pqrsd.dependencia_sugerida.nombre }}
+              <small class="text-muted"
+                >({{ pqrsd.dependencia_sugerida.sigla }})</small
+              >
+              {% else %}
+              <span class="text-muted">No determinada</span>
+              {% endif %}
+            </p>
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="text-muted small text-uppercase fw-bold"
+                >Tipo sugerido</label
+              >
+              <p class="mb-0">
+                <span class="badge bg-secondary fs-6"
+                  >{{ clasificacion.tipo_sugerido }}</span
+                >
+              </p>
+            </div>
+            <div class="col-6">
+              <label class="text-muted small text-uppercase fw-bold"
+                >Prioridad</label
+              >
+              <p class="mb-0">
+                <span class="badge bg-info text-dark fs-6"
+                  >{{ clasificacion.prioridad_sugerida }}</span
+                >
+              </p>
+            </div>
+          </div>
+          {% if clasificacion.confianza %}
+          <div class="mb-3">
+            <label class="text-muted small text-uppercase fw-bold"
+              >Confianza</label
+            >
+            <div class="progress" style="height: 20px">
+              <div
+                class="progress-bar {% if clasificacion.confianza >= 70 %}bg-success{% elif clasificacion.confianza >= 40 %}bg-warning{% else %}bg-danger{% endif %}"
+                style="width:{{ clasificacion.confianza }}%"
+              >
+                {{ clasificacion.confianza|floatformat:0 }}%
+              </div>
+            </div>
+          </div>
+          {% endif %} {% if clasificacion.razon_clasificacion %}
+          <div>
+            <label class="text-muted small text-uppercase fw-bold"
+              >Razonamiento IA</label
+            >
+            <p class="mb-0 fst-italic text-muted">
+              {{ clasificacion.razon_clasificacion }}
+            </p>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario de validación -->
+    <div class="col-lg-6">
+      <div class="card border-0 shadow-sm h-100">
+        <div class="card-header bg-success bg-opacity-10">
+          <h6 class="mb-0">
+            <i class="bi bi-person-check me-2"></i>Validación del funcionario
+          </h6>
+        </div>
+        <div class="card-body">
+          <form
+            method="post"
+            action="{% url 'clasificacion:validar' pqrsd.pk %}"
+          >
+            {% csrf_token %}
+            <div class="mb-3">
+              <label class="form-label fw-bold"
+                >Dependencia competente
+                <span class="text-danger">*</span></label
+              >
+              <select name="dependencia_id" class="form-select" required>
+                <option value="">-- Seleccione dependencia --</option>
+                {% for dep in dependencias %}
+                <option
+                  value="{{ dep.pk }}"
+                  {%
+                  if
+                  pqrsd.dependencia_sugerida
+                  and
+                  pqrsd.dependencia_sugerida.pk=""
+                  ="dep.pk"
+                  %}selected{%
+                  endif
+                  %}
+                >
+                  {{ dep.sigla }} — {{ dep.nombre }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold"
+                >¿Acepta la sugerencia de la IA?</label
+              >
+              <div class="d-flex gap-3">
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="aceptada"
+                    value="si"
+                    id="si"
+                    checked
+                  />
+                  <label class="form-check-label" for="si"
+                    ><i class="bi bi-check-circle text-success me-1"></i>Sí, la
+                    acepto</label
+                  >
+                </div>
+                <div class="form-check">
+                  <input
+                    class="form-check-input"
+                    type="radio"
+                    name="aceptada"
+                    value="no"
+                    id="no"
+                  />
+                  <label class="form-check-label" for="no"
+                    ><i class="bi bi-x-circle text-danger me-1"></i>No, la
+                    corrijo</label
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Comentario (opcional)</label>
+              <textarea
+                name="comentario"
+                class="form-control"
+                rows="3"
+                placeholder="Justificación de la corrección o validación..."
+              ></textarea>
+            </div>
+            <button type="submit" class="btn btn-success w-100 btn-lg">
+              <i class="bi bi-check-circle me-1"></i>Confirmar clasificación
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Texto original -->
+  <div class="card border-0 shadow-sm mt-4">
+    <div class="card-header">
+      <h6 class="mb-0">Texto original de la solicitud</h6>
+    </div>
+    <div class="card-body">
+      <p class="fw-bold mb-1">{{ pqrsd.asunto }}</p>
+      <p class="text-muted mb-0" style="white-space: pre-wrap">
+        {{ pqrsd.descripcion }}
+      </p>
+    </div>
+  </div>
+</div>
+{% endblock %}

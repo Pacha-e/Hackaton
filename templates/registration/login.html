@@ -1,0 +1,36 @@
+{% extends 'base.html' %} {% load crispy_forms_tags %} {% block title %}Ingresar
+— PQRSD Medellín{% endblock %} {% block content %}
+<div class="container">
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-5">
+      <div class="card shadow border-0">
+        <div class="card-header bg-dark text-white text-center py-3">
+          <h4 class="mb-0">
+            <i class="bi bi-shield-lock me-2"></i>Acceso Funcionarios
+          </h4>
+          <small class="text-white-50">Alcaldía de Medellín — PQRSD</small>
+        </div>
+        <div class="card-body p-4">
+          <form method="post">
+            {% csrf_token %} {{ form|crispy }}
+            <button type="submit" class="btn btn-success w-100 btn-lg mt-2">
+              <i class="bi bi-box-arrow-in-right me-1"></i>Ingresar
+            </button>
+          </form>
+        </div>
+        <div class="card-footer text-center text-muted py-3">
+          <small
+            >¿Ciudadano? <a href="{% url 'home' %}">Volver al portal</a></small
+          >
+        </div>
+      </div>
+      <div class="text-center mt-3">
+        <small class="text-muted"
+          >Demo: <code>admin</code> / <code>admin1234</code> &nbsp;|&nbsp;
+          <code>enlace1</code> / <code>pqrsd2026</code></small
+        >
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

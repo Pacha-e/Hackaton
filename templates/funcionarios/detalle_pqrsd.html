@@ -1,0 +1,240 @@
+{% extends 'base.html' %} {% block title %}{{ pqrsd.radicado }}{% endblock %} {%
+block content %}
+<div class="container">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">
+        <a href="{% url 'funcionarios:dashboard' %}">Dashboard</a>
+      </li>
+      <li class="breadcrumb-item active">{{ pqrsd.radicado }}</li>
+    </ol>
+  </nav>
+
+  <div class="row g-4">
+    <!-- Columna principal -->
+    <div class="col-lg-8">
+      <div
+        class="card shadow-sm border-0 mb-3 card-sla-{% if pqrsd.vencida %}vencida{% elif pqrsd.en_alerta %}alerta{% else %}ok{% endif %}"
+      >
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h5 class="mb-0"><code>{{ pqrsd.radicado }}</code></h5>
+          <span class="badge bg-{{ pqrsd.get_estado_badge }} fs-6"
+            >{{ pqrsd.get_estado_display }}</span
+          >
+        </div>
+        <div class="card-body">
+          <h6 class="fw-bold">{{ pqrsd.asunto }}</h6>
+          <div class="row g-2 mb-3">
+            <div class="col-6 col-md-3">
+              <small class="text-muted d-block">Tipo</small
+              ><strong>{{ pqrsd.get_tipo_display }}</strong>
+            </div>
+            <div class="col-6 col-md-3">
+              <small class="text-muted d-block">Canal</small
+              ><strong>{{ pqrsd.get_canal_entrada_display }}</strong>
+            </div>
+            <div class="col-6 col-md-3">
+              <small class="text-muted d-block">Radicado</small
+              ><strong>{{ pqrsd.fecha_radicacion|date:"d/m/Y" }}</strong>
+            </div>
+            <div class="col-6 col-md-3">
+              <small class="text-muted d-block">Fecha límite</small>
+              <strong
+                class="{% if pqrsd.vencida %}text-danger{% elif pqrsd.en_alerta %}text-warning{% endif %}"
+              >
+                {{ pqrsd.fecha_limite|date:"d/m/Y" }} {% if pqrsd.vencida
+                %}<span class="badge bg-danger ms-1">VENCIDA</span> {% elif
+                pqrsd.en_alerta %}<span class="badge bg-warning text-dark ms-1"
+                  >{{ pqrsd.dias_restantes }}d</span
+                >
+                {% endif %}
+              </strong>
+            </div>
+          </div>
+          <hr />
+          <h6 class="text-muted text-uppercase small mb-2">
+            Descripción original del ciudadano
+          </h6>
+          <p class="mb-0" style="white-space: pre-wrap">
+            {{ pqrsd.descripcion }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Clasificación IA -->
+      <div class="card shadow-sm border-0 mb-3">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h6 class="mb-0"><i class="bi bi-cpu me-2"></i>Clasificación IA</h6>
+          {% if pqrsd.clasificacion_validada %}
+          <span class="badge bg-success"
+            ><i class="bi bi-check-lg me-1"></i>Validada por {{
+            pqrsd.validado_por.get_full_name|default:pqrsd.validado_por.username
+            }}</span
+          >
+          {% else %}
+          <a
+            href="{% url 'clasificacion:clasificar' pqrsd.pk %}"
+            class="btn btn-sm btn-warning"
+          >
+            <i class="bi bi-cpu me-1"></i>Clasificar con IA
+          </a>
+          {% endif %}
+        </div>
+        <div class="card-body">
+          {% if pqrsd.dependencia_asignada %}
+          <div class="row g-2">
+            <div class="col-md-6">
+              <small class="text-muted d-block">Dependencia asignada</small>
+              <strong>{{ pqrsd.dependencia_asignada.nombre }}</strong>
+              <small class="text-muted"
+                >({{ pqrsd.dependencia_asignada.sigla }})</small
+              >
+            </div>
+            {% if pqrsd.confianza_clasificacion %}
+            <div class="col-md-3">
+              <small class="text-muted d-block">Confianza IA</small>
+              <strong
+                >{{ pqrsd.confianza_clasificacion|floatformat:0 }}%</strong
+              >
+            </div>
+            {% endif %} {% if pqrsd.dependencia_sugerida and
+            pqrsd.dependencia_sugerida != pqrsd.dependencia_asignada %}
+            <div class="col-md-3">
+              <small class="text-muted d-block">IA sugirió</small>
+              <span class="text-muted"
+                >{{ pqrsd.dependencia_sugerida.sigla }}</span
+              >
+            </div>
+            {% endif %}
+          </div>
+          {% elif pqrsd.dependencia_sugerida %}
+          <div class="alert alert-warning py-2 mb-0">
+            <i class="bi bi-robot me-1"></i>IA sugiere:
+            <strong>{{ pqrsd.dependencia_sugerida.nombre }}</strong>
+            ({{ pqrsd.confianza_clasificacion|floatformat:0 }}% confianza) —
+            pendiente validación humana.
+          </div>
+          {% else %}
+          <p class="text-muted mb-0">
+            Aún no se ha procesado la clasificación automática.
+          </p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Síntesis -->
+      <div class="card shadow-sm border-0 mb-3">
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <h6 class="mb-0">
+            <i class="bi bi-file-text me-2"></i>Síntesis Estructurada (3 capas)
+          </h6>
+          <a
+            href="{% url 'funcionarios:ver_sintesis' pqrsd.pk %}"
+            class="btn btn-sm btn-outline-primary"
+          >
+            {% if pqrsd.sintesis %}<i class="bi bi-eye me-1"></i>Ver síntesis{%
+            else %}<i class="bi bi-magic me-1"></i>Generar síntesis{% endif %}
+          </a>
+        </div>
+        {% if pqrsd.sintesis %}
+        <div class="card-body">
+          <div class="alert alert-light border mb-2 py-2">
+            <small class="text-muted text-uppercase fw-bold"
+              >Capa 1 — Resumen ejecutivo</small
+            >
+            <p class="mb-0 mt-1">{{ pqrsd.sintesis.resumen_ejecutivo }}</p>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Panel lateral -->
+    <div class="col-lg-4">
+      <!-- Datos ciudadano -->
+      <div class="card shadow-sm border-0 mb-3">
+        <div class="card-header">
+          <h6 class="mb-0"><i class="bi bi-person me-2"></i>Ciudadano</h6>
+        </div>
+        <div class="card-body">
+          {% if pqrsd.anonimo %}<span class="badge bg-secondary mb-2"
+            >Anónimo</span
+          >{% endif %} {% if pqrsd.nombre_ciudadano %}
+          <p class="mb-1"><strong>{{ pqrsd.nombre_ciudadano }}</strong></p>
+          {% endif %} {% if pqrsd.email_ciudadano %}
+          <p class="mb-1">
+            <i class="bi bi-envelope me-1 text-muted"></i
+            ><small>{{ pqrsd.email_ciudadano }}</small>
+          </p>
+          {% endif %} {% if pqrsd.telefono_ciudadano %}
+          <p class="mb-1">
+            <i class="bi bi-telephone me-1 text-muted"></i
+            ><small>{{ pqrsd.telefono_ciudadano }}</small>
+          </p>
+          {% endif %} {% if pqrsd.comuna %}
+          <p class="mb-1">
+            <i class="bi bi-geo-alt me-1 text-muted"></i
+            ><small
+              >{{ pqrsd.barrio|default:"" }}{% if pqrsd.barrio and pqrsd.comuna
+              %}, {% endif %}{{ pqrsd.comuna }}</small
+            >
+          </p>
+          {% endif %} {% if not pqrsd.nombre_ciudadano and not pqrsd.anonimo %}
+          <p class="text-muted mb-0"><small>Sin datos</small></p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Cambiar estado -->
+      <div class="card shadow-sm border-0 mb-3">
+        <div class="card-header">
+          <h6 class="mb-0">
+            <i class="bi bi-arrow-repeat me-2"></i>Actualizar estado
+          </h6>
+        </div>
+        <div class="card-body">
+          <form
+            method="post"
+            action="{% url 'funcionarios:cambiar_estado' pqrsd.pk %}"
+          >
+            {% csrf_token %}
+            <select name="estado" class="form-select form-select-sm mb-2">
+              {% for val, label in pqrsd.ESTADO_CHOICES %}
+              <option
+                value="{{ val }}"
+                {%
+                if
+                pqrsd.estado=""
+                ="val"
+                %}selected{%
+                endif
+                %}
+              >
+                {{ label }}
+              </option>
+              {% endfor %}
+            </select>
+            <textarea
+              name="observaciones"
+              class="form-control form-control-sm mb-2"
+              rows="2"
+              placeholder="Observaciones (opcional)"
+            >
+{{ pqrsd.observaciones_funcionario }}</textarea
+            >
+            <button class="btn btn-sm btn-success w-100" type="submit">
+              <i class="bi bi-check-lg me-1"></i>Actualizar
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

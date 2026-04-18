@@ -1,0 +1,83 @@
+{% extends 'base.html' %} {% block title %}Consultar Estado{% endblock %} {%
+block content %}
+<div class="container">
+  <div class="row justify-content-center mt-4">
+    <div class="col-lg-7">
+      <h2 class="fw-bold mb-4">
+        <i class="bi bi-search me-2"></i>Consultar estado de solicitud
+      </h2>
+      <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body p-4">
+          <form method="get">
+            <div class="input-group input-group-lg">
+              <input
+                type="text"
+                name="radicado"
+                class="form-control"
+                placeholder="Ej: MDE-202504-00001"
+                value="{{ radicado }}"
+              />
+              <button class="btn btn-primary" type="submit">
+                <i class="bi bi-search"></i> Buscar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {% if pqrsd %}
+      <div
+        class="card shadow border-0 card-sla-{% if pqrsd.vencida %}vencida{% elif pqrsd.en_alerta %}alerta{% else %}ok{% endif %}"
+      >
+        <div
+          class="card-header d-flex justify-content-between align-items-center"
+        >
+          <strong>{{ pqrsd.radicado }}</strong>
+          <span class="badge bg-{{ pqrsd.get_estado_badge }}"
+            >{{ pqrsd.get_estado_display }}</span
+          >
+        </div>
+        <div class="card-body">
+          <table class="table table-sm mb-0">
+            <tr>
+              <th>Tipo</th>
+              <td>{{ pqrsd.get_tipo_display }}</td>
+            </tr>
+            <tr>
+              <th>Asunto</th>
+              <td>{{ pqrsd.asunto }}</td>
+            </tr>
+            <tr>
+              <th>Radicado</th>
+              <td>{{ pqrsd.fecha_radicacion|date:"d/m/Y H:i" }}</td>
+            </tr>
+            <tr>
+              <th>Fecha límite</th>
+              <td>
+                {{ pqrsd.fecha_limite|date:"d/m/Y" }} {% if pqrsd.vencida %}
+                <span class="badge bg-danger ms-1">VENCIDA</span>
+                {% elif pqrsd.en_alerta %}
+                <span class="badge bg-warning text-dark ms-1"
+                  >{{ pqrsd.dias_restantes }} días</span
+                >
+                {% else %}
+                <span class="text-muted ms-1"
+                  >({{ pqrsd.dias_restantes }} días restantes)</span
+                >
+                {% endif %}
+              </td>
+            </tr>
+            {% if pqrsd.dependencia_asignada %}
+            <tr>
+              <th>Dependencia</th>
+              <td>{{ pqrsd.dependencia_asignada.nombre }}</td>
+            </tr>
+            {% endif %}
+          </table>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

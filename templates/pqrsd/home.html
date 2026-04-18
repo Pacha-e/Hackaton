@@ -1,0 +1,91 @@
+{% extends 'base.html' %} {% block title %}Inicio — PQRSD Medellín{% endblock %}
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center mt-3">
+    <div class="col-lg-10">
+      <div class="text-center mb-5">
+        <h1 class="display-5 fw-bold">Sistema PQRSD</h1>
+        <p class="lead text-muted">
+          Alcaldía de Medellín — Secretaría de Desarrollo Económico
+        </p>
+        <p class="text-muted">
+          Presente su Petición, Queja, Reclamo, Sugerencia o Denuncia de forma
+          fácil y segura.<br />
+          Le responderemos en los tiempos establecidos por la Ley 1755 de 2015.
+        </p>
+      </div>
+
+      <div class="row g-4 mb-5">
+        <div class="col-md-6">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-body text-center p-4">
+              <i
+                class="bi bi-pencil-square display-4 text-success mb-3 d-block"
+              ></i>
+              <h4>Radicar una Solicitud</h4>
+              <p class="text-muted">
+                Presente su PQRSD en línea. Recibirá un número de radicado para
+                hacer seguimiento.
+              </p>
+              <a
+                href="{% url 'radicar_pqrsd' %}"
+                class="btn btn-success btn-lg"
+              >
+                <i class="bi bi-send me-1"></i> Radicar ahora
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="card h-100 shadow-sm border-0">
+            <div class="card-body text-center p-4">
+              <i class="bi bi-search display-4 text-primary mb-3 d-block"></i>
+              <h4>Consultar Estado</h4>
+              <p class="text-muted">
+                Conozca el estado de su solicitud ingresando el número de
+                radicado.
+              </p>
+              <a
+                href="{% url 'consultar_estado' %}"
+                class="btn btn-primary btn-lg"
+              >
+                <i class="bi bi-eye me-1"></i> Consultar
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-3 mb-4">
+        <div class="col-12">
+          <h5 class="fw-bold text-muted">
+            Tipos de solicitudes que puede presentar
+          </h5>
+        </div>
+        {% for tipo, label, desc, icono in tipos %}
+        <div class="col-md-4 col-sm-6">
+          <div class="card border-0 bg-white shadow-sm">
+            <div class="card-body">
+              <h6 class="fw-bold">
+                <i class="bi bi-{{ icono }} me-1 text-success"></i>{{ label }}
+              </h6>
+              <small class="text-muted">{{ desc }}</small>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="alert alert-info d-flex align-items-center">
+        <i class="bi bi-clock-history me-2 fs-5"></i>
+        <div>
+          <strong>Tiempos de respuesta:</strong>
+          Hasta <strong>15 días hábiles</strong> en general &bull;
+          <strong>10 días</strong> para información o copias &bull;
+          <strong>30 días</strong> para conceptos jurídicos. (Ley 1755/2015)
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

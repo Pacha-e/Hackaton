@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard Funcionarios{% endblock %}
+{% block content %}
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold mb-0"><i class="bi bi-speedometer2 me-2"></i>Dashboard PQRSD</h2>
+        <small class="text-muted">{{ user.get_full_name|default:user.username }}</small>
+    </div>
+
+    <!-- Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="card border-0 shadow-sm text-center">
+                <div class="card-body py-3">
+                    <div class="fs-2 fw-bold">{{ stats.total }}</div>
+                    <small class="text-muted">Total</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="card border-0 shadow-sm text-center bg-secondary bg-opacity-10">
+                <div class="card-body py-3">
+                    <div class="fs-2 fw-bold text-secondary">{{ stats.radicadas }}</div>
+                    <small class="text-muted">Radicadas</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="card border-0 shadow-sm text-center bg-primary bg-opacity-10">
+                <div class="card-body py-3">
+                    <div class="fs-2 fw-bold text-primary">{{ stats.en_tramite }}</div>
+                    <small class="text-muted">En trámite</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="card border-0 shadow-sm text-center bg-success bg-opacity-10">
+                <div class="card-body py-3">
+                    <div class="fs-2 fw-bold text-success">{{ stats.respondidas }}</div>
+                    <small class="text-muted">Respondidas</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="card border-0 shadow-sm text-center bg-warning bg-opacity-10">
+                <div class="card-body py-3">
+                    <div class="fs-2 fw-bold text-warning">{{ stats.alertas }}</div>
+                    <small class="text-muted">En alerta SLA</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3 col-lg-2">
+            <div class="card border-0 shadow-sm text-center bg-danger bg-opacity-10">
+                <div class="card-body py-3">
+                    <div class="fs-2 fw-bold text-danger">{{ stats.vencidas }}</div>
+                    <small class="text-muted">Vencidas</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body py-2">
+            <form method="get" class="row g-2 align-items-end">
+                <div class="col-md-3">
+                    <input type="text" name="q" class="form-control form-control-sm" placeholder="Radicado, asunto o ciudadano" value="{{ filtros.q }}">
+                </div>
+                <div class="col-md-2">
+                    <select name="estado" class="form-select form-select-sm">
+                        <option value="">-- Estado --</option>
+                        {% for val, label in estado_choices %}
+                        <option value="{{ val }}" {% if filtros.estado == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="tipo" class="form-select form-select-sm">
+                        <option value="">-- Tipo --</option>
+                        {% for val, label in tipo_choices %}
+                        <option value="{{ val }}" {% if filtros.tipo == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="dependencia" class="form-select form-select-sm">
+                        <option value="">-- Dependencia --</option>
+                        {% for dep in dependencias %}
+                        <option value="{{ dep.pk }}" {% if filtros.dep_id == dep.pk|stringformat:"s" %}selected{% endif %}>{{ dep.sigla }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="alertas" value="1" id="chkAlertas" {% if filtros.alertas %}checked{% endif %}>
+                        <label class="form-check-label small" for="chkAlertas">Solo alertas</label>
+                    </div>
+                </div>
+                <div class="col-md-2 d-flex gap-1">
+                    <button class="btn btn-primary btn-sm" type="submit"><i class="bi bi-funnel"></i> Filtrar</button>
+                    <a href="{% url 'funcionarios:dashboard' %}" class="btn btn-outline-secondary btn-sm">Limpiar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Tabla PQRSD -->
+    <div class="card border-0 shadow-sm">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Radicado</th>
+                            <th>Tipo</th>
+                            <th>Asunto</th>
+                            <th>Canal</th>
+                            <th>Dependencia</th>
+                            <th>Estado</th>
+                            <th>SLA</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in pqrsds %}
+                        <tr class="{% if p.vencida %}table-danger{% elif p.en_alerta %}table-warning{% endif %}">
+                            <td><code>{{ p.radicado }}</code></td>
+                            <td><span class="badge bg-light text-dark border">{{ p.get_tipo_display }}</span></td>
+                            <td class="text-truncate" style="max-width:200px" title="{{ p.asunto }}">{{ p.asunto }}</td>
+                            <td><small>{{ p.get_canal_entrada_display }}</small></td>
+                            <td><small>{{ p.dependencia_asignada.sigla|default:"—" }}</small></td>
+                            <td><span class="badge bg-{{ p.get_estado_badge }}">{{ p.get_estado_display }}</span></td>
+                            <td>
+                                {% if p.vencida %}
+                                    <span class="badge bg-danger badge-alerta">VENCIDA</span>
+                                {% elif p.en_alerta %}
+                                    <span class="badge bg-warning text-dark">{{ p.dias_restantes }}d</span>
+                                {% else %}
+                                    <small class="text-muted">{{ p.dias_restantes }}d</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="d-flex gap-1">
+                                    <a href="{% url 'funcionarios:detalle_pqrsd' p.pk %}" class="btn btn-sm btn-outline-primary" title="Ver detalle">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    {% if not p.clasificacion_validada %}
+                                    <a href="{% url 'clasificacion:clasificar' p.pk %}" class="btn btn-sm btn-outline-warning" title="Clasificar con IA">
+                                        <i class="bi bi-cpu"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="8" class="text-center text-muted py-4">No hay solicitudes con los filtros seleccionados.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
