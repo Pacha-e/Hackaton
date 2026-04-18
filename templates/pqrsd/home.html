@@ -47,7 +47,7 @@
               </p>
               <a
                 href="{% url 'consultar_estado' %}"
-                class="btn btn-primary btn-lg"
+                class="btn btn-outline-success btn-lg"
               >
                 <i class="bi bi-eye me-1"></i> Consultar
               </a>
@@ -64,14 +64,16 @@
         </div>
         {% for tipo, label, desc, icono in tipos %}
         <div class="col-md-4 col-sm-6">
-          <div class="card border-0 bg-white shadow-sm">
-            <div class="card-body">
-              <h6 class="fw-bold">
-                <i class="bi bi-{{ icono }} me-1 text-success"></i>{{ label }}
-              </h6>
-              <small class="text-muted">{{ desc }}</small>
+          <a href="{% url 'radicar_pqrsd' %}?tipo={{ tipo }}" class="text-decoration-none d-block h-100">
+            <div class="card border-0 bg-white shadow-sm h-100 hover-shadow transition">
+              <div class="card-body">
+                <h6 class="fw-bold text-dark">
+                  <i class="bi bi-{{ icono }} me-1 text-success"></i>{{ label }}
+                </h6>
+                <small class="text-secondary">{{ desc }}</small>
+              </div>
             </div>
-          </div>
+          </a>
         </div>
         {% endfor %}
       </div>

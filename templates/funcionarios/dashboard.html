@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Dashboard Funcionarios{% endblock %}
+{% block body_class %}dashboard{% endblock %}
 {% block content %}
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -10,52 +11,64 @@
     <!-- Stats -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3 col-lg-2">
-            <div class="card border-0 shadow-sm text-center">
-                <div class="card-body py-3">
-                    <div class="fs-2 fw-bold">{{ stats.total }}</div>
-                    <small class="text-muted">Total</small>
+            <a href="?{% if filtros.q %}q={{ filtros.q }}&{% endif %}" class="text-decoration-none">
+                <div class="card border-0 shadow-sm text-center">
+                    <div class="card-body py-3">
+                        <div class="fs-2 fw-bold">{{ stats.total }}</div>
+                        <small class="text-muted">Total</small>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
         <div class="col-6 col-md-3 col-lg-2">
-            <div class="card border-0 shadow-sm text-center bg-secondary bg-opacity-10">
-                <div class="card-body py-3">
-                    <div class="fs-2 fw-bold text-secondary">{{ stats.radicadas }}</div>
-                    <small class="text-muted">Radicadas</small>
+            <a href="?estado=radicada" class="text-decoration-none">
+                <div class="card border-0 shadow-sm text-center bg-secondary bg-opacity-10">
+                    <div class="card-body py-3">
+                        <div class="fs-2 fw-bold text-secondary">{{ stats.radicadas }}</div>
+                        <small class="text-muted">Radicadas</small>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
         <div class="col-6 col-md-3 col-lg-2">
-            <div class="card border-0 shadow-sm text-center bg-primary bg-opacity-10">
-                <div class="card-body py-3">
-                    <div class="fs-2 fw-bold text-primary">{{ stats.en_tramite }}</div>
-                    <small class="text-muted">En trámite</small>
+            <a href="?estado=en_tramite" class="text-decoration-none">
+                <div class="card border-0 shadow-sm text-center bg-primary bg-opacity-10">
+                    <div class="card-body py-3">
+                        <div class="fs-2 fw-bold text-primary">{{ stats.en_tramite }}</div>
+                        <small class="text-muted">En trámite</small>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
         <div class="col-6 col-md-3 col-lg-2">
-            <div class="card border-0 shadow-sm text-center bg-success bg-opacity-10">
-                <div class="card-body py-3">
-                    <div class="fs-2 fw-bold text-success">{{ stats.respondidas }}</div>
-                    <small class="text-muted">Respondidas</small>
+            <a href="?estado=respondida" class="text-decoration-none">
+                <div class="card border-0 shadow-sm text-center bg-success bg-opacity-10">
+                    <div class="card-body py-3">
+                        <div class="fs-2 fw-bold text-success">{{ stats.respondidas }}</div>
+                        <small class="text-muted">Respondidas</small>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
         <div class="col-6 col-md-3 col-lg-2">
-            <div class="card border-0 shadow-sm text-center bg-warning bg-opacity-10">
-                <div class="card-body py-3">
-                    <div class="fs-2 fw-bold text-warning">{{ stats.alertas }}</div>
-                    <small class="text-muted">En alerta SLA</small>
+            <a href="?alertas=1" class="text-decoration-none">
+                <div class="card border-0 shadow-sm text-center bg-warning bg-opacity-10">
+                    <div class="card-body py-3">
+                        <div class="fs-2 fw-bold text-warning">{{ stats.alertas }}</div>
+                        <small class="text-muted">En alerta SLA</small>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
         <div class="col-6 col-md-3 col-lg-2">
-            <div class="card border-0 shadow-sm text-center bg-danger bg-opacity-10">
-                <div class="card-body py-3">
-                    <div class="fs-2 fw-bold text-danger">{{ stats.vencidas }}</div>
-                    <small class="text-muted">Vencidas</small>
+            <a href="?estado=vencida" class="text-decoration-none">
+                <div class="card border-0 shadow-sm text-center bg-danger bg-opacity-10">
+                    <div class="card-body py-3">
+                        <div class="fs-2 fw-bold text-danger">{{ stats.vencidas }}</div>
+                        <small class="text-muted">Vencidas</small>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 
@@ -153,7 +166,15 @@
                             </td>
                         </tr>
                         {% empty %}
-                        <tr><td colspan="8" class="text-center text-muted py-4">No hay solicitudes con los filtros seleccionados.</td></tr>
+                        <tr>
+                            <td colspan="8" class="text-center py-5">
+                                <div class="text-muted my-3">
+                                    <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                    <h5>No hay solicitudes</h5>
+                                    <p class="small">No se encontraron resultados con los filtros actuales.</p>
+                                </div>
+                            </td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>

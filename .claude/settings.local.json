@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__obsidian__obsidian_global_search",
+      "WebFetch(domain:www.medellin.gov.co)",
+      "Bash(git init *)",
+      "Bash(git remote *)",
+      "Bash(git checkout *)"
+    ]
+  },
+  "enabledMcpjsonServers": [
+    "vercel",
+    "nanobanana"
+  ]
+}

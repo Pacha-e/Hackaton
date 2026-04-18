@@ -26,7 +26,8 @@ def radicar_pqrsd(request):
             messages.success(request, f'Su solicitud fue radicada exitosamente con el número: {pqrsd.radicado}')
             return redirect('confirmacion_radicado', radicado=pqrsd.radicado)
     else:
-        form = PQRSDCiudadanoForm()
+        tipo_inicial = request.GET.get('tipo', '')
+        form = PQRSDCiudadanoForm(initial={'tipo': tipo_inicial} if tipo_inicial else None)
     return render(request, 'pqrsd/radicar.html', {'form': form})
 
 

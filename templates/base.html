@@ -16,6 +16,13 @@
       :root {
         --medellin-green: #00a859;
         --medellin-dark: #1a3a2a;
+        --bs-success: #00a859;
+        --bs-success-rgb: 0, 168, 89;
+        --bs-btn-bg: #00a859;
+      }
+      body.dashboard {
+        background-color: #0f1e17 !important;
+        color: #e8f0eb !important;
       }
       .navbar-brand {
         font-weight: 700;
@@ -48,7 +55,7 @@
     </style>
     {% block extra_css %}{% endblock %}
   </head>
-  <body class="bg-light">
+  <body class="{% block body_class %}bg-light{% endblock %}">
     <nav class="navbar navbar-expand-lg navbar-dark">
       <div class="container-fluid">
         <a class="navbar-brand" href="{% url 'home' %}">
@@ -147,7 +154,7 @@
     <footer class="text-center text-muted py-3 mt-4 border-top">
       <small
         >Alcaldía de Medellín — Secretaría de Desarrollo Económico &bull; PQRSD
-        &bull; OmegaHack 2026 — Grupo NOVA / EAFIT</small
+        {% if user.is_staff %}&bull; OmegaHack 2026 — Grupo NOVA / EAFIT{% endif %}</small
       >
     </footer>
 

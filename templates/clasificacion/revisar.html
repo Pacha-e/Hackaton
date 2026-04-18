@@ -38,7 +38,7 @@
       <div class="card border-0 shadow-sm h-100">
         <div class="card-header bg-warning bg-opacity-10">
           <h6 class="mb-0">
-            <i class="bi bi-robot me-2"></i>Sugerencia de Gemini 1.5 Flash
+            <i class="bi bi-robot me-2"></i>Sugerencia del asistente IA
           </h6>
           <small class="text-muted"
             >Modelo: {{ clasificacion.modelo_usado }} &bull; {{
@@ -132,22 +132,16 @@
               >
               <select name="dependencia_id" class="form-select" required>
                 <option value="">-- Seleccione dependencia --</option>
-                {% for dep in dependencias %}
-                <option
-                  value="{{ dep.pk }}"
-                  {%
-                  if
-                  pqrsd.dependencia_sugerida
-                  and
-                  pqrsd.dependencia_sugerida.pk=""
-                  ="dep.pk"
-                  %}selected{%
-                  endif
-                  %}
-                >
+                {% for dep in dependencias %} {% if pqrsd.dependencia_sugerida
+                and pqrsd.dependencia_sugerida.pk == dep.pk %}
+                <option value="{{ dep.pk }}" selected>
                   {{ dep.sigla }} — {{ dep.nombre }}
                 </option>
-                {% endfor %}
+                {% else %}
+                <option value="{{ dep.pk }}">
+                  {{ dep.sigla }} — {{ dep.nombre }}
+                </option>
+                {% endif %} {% endfor %}
               </select>
             </div>
             <div class="mb-3">
