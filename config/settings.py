@@ -16,16 +16,20 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'crispy_forms',
     'crispy_bootstrap5',
+    'rest_framework',
+    'corsheaders',
     'apps.conocimiento',
     'apps.pqrsd',
     'apps.clasificacion',
     'apps.sintesis',
     'apps.funcionarios',
+    'apps.api',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -95,3 +99,27 @@ LOGIN_REDIRECT_URL = 'funcionarios:dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
 GEMINI_API_KEY = config('GEMINI_API_KEY', default='')
+
+# Webhook Chatwoot → Django (opcional; si está vacío no se valida token — solo para desarrollo)
+CHATWOOT_WEBHOOK_SECRET = config('CHATWOOT_WEBHOOK_SECRET', default='')
+
+# CORS — allow React dev server
+CORS_ALLOWED_ORIGINS = config(
+    'CORS_ALLOWED_ORIGINS',
+    default='http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173'
+).split(',')
+CORS_ALLOW_CREDENTIALS = True
+
+# DRF
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+}
