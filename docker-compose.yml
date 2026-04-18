@@ -29,7 +29,7 @@ services:
       db:
         condition: service_healthy
 
-  # --- Chatwoot (rama woot): variables en .env.chatwoot (no mezclar con Django) ---
+  # --- Chatwoot (rama origin/woot): variables en .env.chatwoot (no mezclar con Django) ---
   x-chatwoot-base: &chatwoot_base
     image: chatwoot/chatwoot:v4.0.1-ce
     env_file:
