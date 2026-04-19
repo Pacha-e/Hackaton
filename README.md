@@ -33,9 +33,9 @@ Eso es todo. En 2–3 minutos el sistema estará levantado.
 
 | Servicio | URL | Descripción |
 |----------|-----|-------------|
-| Portal ciudadano | http://localhost:8090/pqrsd/ | Radicar y consultar PQRSD |
-| Dashboard staff | http://localhost:8090/funcionarios/ | Gestión y clasificación |
-| API REST | http://localhost:8090/api/v1/ | Todos los endpoints |
+| Portal ciudadano | http://localhost:5175/pqrsd/ | Radicar y consultar PQRSD |
+| Dashboard staff | http://localhost:5175/funcionarios/ | Gestión y clasificación |
+| API REST | http://localhost:5175/api/v1/ | Todos los endpoints |
 | SPA React | http://localhost:5175/ | Interfaz staff moderna |
 
 ## Usuarios demo
