@@ -5,7 +5,7 @@ from django.db.models import Count, Q
 from django.utils import timezone
 
 from apps.pqrsd.models import PQRSD
-from apps.conocimiento.models import Dependencia
+from apps.conocimiento.models import Dependencia, SyncLog
 
 
 @login_required
@@ -53,6 +53,7 @@ def dashboard(request):
         pqrsds = alertas | vencidas
 
     dependencias = Dependencia.objects.filter(activa=True)
+    last_sync = SyncLog.objects.filter(fuente='medata').first()
     return render(request, 'funcionarios/dashboard.html', {
         'pqrsds': pqrsds,
         'stats': stats,
@@ -60,6 +61,7 @@ def dashboard(request):
         'filtros': {'estado': estado, 'tipo': tipo, 'dep_id': dep_id, 'q': q, 'alertas': solo_alertas},
         'estado_choices': PQRSD.ESTADO_CHOICES,
         'tipo_choices': PQRSD.TIPO_CHOICES,
+        'last_sync': last_sync,
     })
 
 
@@ -70,6 +72,25 @@ def detalle_pqrsd(request, pk):
         pk=pk
     )
     return render(request, 'funcionarios/detalle_pqrsd.html', {'pqrsd': pqrsd})
+
+
+@login_required
+def sync_medata_view(request):
+    if not request.user.is_staff:
+        messages.error(request, 'Solo staff puede ejecutar sincronizaciones.')
+        return redirect('funcionarios:dashboard')
+    if request.method == 'POST':
+        from django.core.management import call_command
+        import io as _io
+        out = _io.StringIO()
+        try:
+            call_command('sync_medata', limit=500, stdout=out)
+            log = SyncLog.objects.filter(fuente='medata').first()
+            count = log.registros_importados if log else 0
+            messages.success(request, f'Sincronización exitosa: {count} registros importados desde Medata.')
+        except Exception as exc:
+            messages.error(request, f'Error en sincronización: {exc}')
+    return redirect('funcionarios:dashboard')
 
 
 @login_required

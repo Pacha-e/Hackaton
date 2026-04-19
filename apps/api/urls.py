@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
+    path('', views.api_root),
     # Auth
     path('auth/csrf/', views.csrf_token),
     path('auth/login/', views.api_login),
@@ -34,6 +35,9 @@ urlpatterns = [
 
     # Demo simulation
     path('demo/inject/', views.demo_inject),
+
+    # Medata sync
+    path('sync-medata/', views.sync_medata),
 
     # Chatwoot → PQRSD (webhook)
     path('integrations/chatwoot/', views.chatwoot_webhook),

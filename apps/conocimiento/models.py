@@ -1,4 +1,22 @@
 from django.db import models
+from django.utils import timezone
+
+
+class SyncLog(models.Model):
+    fuente = models.CharField(max_length=100, default='medata')
+    registros_importados = models.PositiveIntegerField(default=0)
+    ejecutado_en = models.DateTimeField(default=timezone.now)
+    exitoso = models.BooleanField(default=True)
+    error_msg = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ['-ejecutado_en']
+        verbose_name = 'Log de Sincronización'
+        verbose_name_plural = 'Logs de Sincronización'
+
+    def __str__(self):
+        estado = 'OK' if self.exitoso else 'ERROR'
+        return f"[{estado}] {self.fuente} — {self.registros_importados} registros ({self.ejecutado_en:%Y-%m-%d %H:%M})"
 
 
 class Dependencia(models.Model):

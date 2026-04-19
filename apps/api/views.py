@@ -19,7 +19,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 
 from apps.pqrsd.models import PQRSD
-from apps.conocimiento.models import Dependencia, PrecedenteRespuesta
+from apps.conocimiento.models import Dependencia, PrecedenteRespuesta, SyncLog
 from apps.clasificacion.models import ClasificacionIA
 from apps.clasificacion.services import clasificar_y_persistir
 from apps.sintesis.models import SintesisPQRSD
@@ -636,6 +636,51 @@ def choices(request):
         'canal': [{'value': k, 'label': v} for k, v in PQRSD.CANAL_CHOICES],
         'prioridad': [{'value': k, 'label': v} for k, v in PQRSD.PRIORIDAD_CHOICES],
     })
+
+
+# ---------------------------------------------------------------------------
+# STAFF — SYNC MEDATA
+# ---------------------------------------------------------------------------
+
+@api_view(['POST', 'GET'])
+@permission_classes([IsAuthenticated])
+def sync_medata(request):
+    """
+    Triggers sync_medata management command inline (no Celery needed).
+    GET → returns last sync log entry.
+    POST → runs sync and returns result.
+    """
+    if not request.user.is_staff:
+        return Response({'error': 'Solo staff puede ejecutar sincronizaciones.'}, status=status.HTTP_403_FORBIDDEN)
+
+    if request.method == 'GET':
+        last = SyncLog.objects.filter(fuente='medata').first()
+        if not last:
+            return Response({'last_sync': None})
+        return Response({
+            'last_sync': {
+                'ejecutado_en': last.ejecutado_en,
+                'registros_importados': last.registros_importados,
+                'exitoso': last.exitoso,
+                'error_msg': last.error_msg,
+            }
+        })
+
+    limit = int(request.data.get('limit', 500))
+    from django.core.management import call_command
+    import io as _io
+    out = _io.StringIO()
+    err = _io.StringIO()
+    try:
+        call_command('sync_medata', limit=limit, stdout=out, stderr=err)
+        log = SyncLog.objects.filter(fuente='medata').first()
+        return Response({
+            'ok': True,
+            'registros_importados': log.registros_importados if log else 0,
+            'output': out.getvalue(),
+        })
+    except Exception as exc:
+        return Response({'ok': False, 'error': str(exc), 'output': out.getvalue()}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # ---------------------------------------------------------------------------
