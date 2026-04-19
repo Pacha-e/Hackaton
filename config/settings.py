@@ -125,3 +125,14 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
     ],
 }
+
+# ========================================
+# LangSmith — Observabilidad de Agentes
+# LangChain lee estas variables del entorno de sistema operativo (os.environ)
+# Las inyectamos aquí para que Docker las cargue desde .env
+# ========================================
+import os
+os.environ.setdefault('LANGCHAIN_TRACING_V2', config('LANGCHAIN_TRACING_V2', default='false'))
+os.environ.setdefault('LANGCHAIN_ENDPOINT', config('LANGCHAIN_ENDPOINT', default='https://api.smith.langchain.com'))
+os.environ.setdefault('LANGCHAIN_API_KEY', config('LANGCHAIN_API_KEY', default=''))
+os.environ.setdefault('LANGCHAIN_PROJECT', config('LANGCHAIN_PROJECT', default='OmegaHack2026-PQRSD'))
