@@ -167,9 +167,9 @@ export default function PqrsdDetailPage() {
         </div>
 
         {successMsg && (
-          <div className="mx-6 mt-4 flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-lg p-3">
-            <CheckCircle className="h-4 w-4 text-emerald-500" />
-            <p className="text-sm text-emerald-700">{successMsg}</p>
+          <div className="mx-6 mt-4 flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <CheckCircle className="h-4 w-4 text-blue-500" />
+            <p className="text-sm text-blue-700">{successMsg}</p>
           </div>
         )}
 
@@ -295,9 +295,9 @@ export default function PqrsdDetailPage() {
                         <p className="text-xs text-blue-600 mb-1">Prioridad sugerida</p>
                         <p className="font-semibold text-blue-800">{pqrsd.clasificacion_ia.prioridad_sugerida}</p>
                       </div>
-                      <div className="bg-emerald-50 rounded-lg p-3">
-                        <p className="text-xs text-emerald-600 mb-1">Confianza IA</p>
-                        <p className="font-semibold text-emerald-800">{pqrsd.clasificacion_ia.confianza}%</p>
+                      <div className="bg-blue-50 rounded-lg p-3">
+                        <p className="text-xs text-blue-600 mb-1">Confianza IA</p>
+                        <p className="font-semibold text-blue-800">{pqrsd.clasificacion_ia.confianza}%</p>
                       </div>
                     </div>
                     <div className="bg-slate-50 rounded-lg p-3">
@@ -350,9 +350,9 @@ export default function PqrsdDetailPage() {
                         </div>
                       </div>
                     ) : (
-                      <div className={`flex items-center gap-2 p-3 rounded-lg ${pqrsd.clasificacion_ia.aceptada ? 'bg-emerald-50 border border-emerald-200' : 'bg-red-50 border border-red-200'}`}>
+                      <div className={`flex items-center gap-2 p-3 rounded-lg ${pqrsd.clasificacion_ia.aceptada ? 'bg-blue-50 border border-blue-200' : 'bg-red-50 border border-red-200'}`}>
                         {pqrsd.clasificacion_ia.aceptada
-                          ? <CheckCircle className="h-4 w-4 text-emerald-500" />
+                          ? <CheckCircle className="h-4 w-4 text-blue-500" />
                           : <XCircle className="h-4 w-4 text-red-500" />
                         }
                         <span className="text-sm font-medium">
@@ -400,9 +400,9 @@ export default function PqrsdDetailPage() {
                       </div>
                     )}
                     {pqrsd.sintesis.accion_requerida && (
-                      <div className="bg-emerald-50 rounded-lg p-3">
-                        <p className="text-xs text-emerald-600 mb-1">Acción requerida</p>
-                        <p className="text-sm text-emerald-800">{pqrsd.sintesis.accion_requerida}</p>
+                      <div className="bg-blue-50 rounded-lg p-3">
+                        <p className="text-xs text-blue-600 mb-1">Acción requerida</p>
+                        <p className="text-sm text-blue-800">{pqrsd.sintesis.accion_requerida}</p>
                       </div>
                     )}
                     {pqrsd.sintesis.normativa_aplicable && (
@@ -433,11 +433,11 @@ export default function PqrsdDetailPage() {
               </CardHeader>
               <CardContent>
                 {pqrsd.dependencia_asignada_info ? (
-                  <div className="bg-emerald-50 border border-emerald-100 rounded-lg p-3">
-                    <p className="font-semibold text-emerald-800">{pqrsd.dependencia_asignada_info.sigla}</p>
-                    <p className="text-xs text-emerald-600">{pqrsd.dependencia_asignada_info.nombre}</p>
+                  <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
+                    <p className="font-semibold text-blue-800">{pqrsd.dependencia_asignada_info.sigla}</p>
+                    <p className="text-xs text-blue-600">{pqrsd.dependencia_asignada_info.nombre}</p>
                     {pqrsd.dependencia_asignada_info.email_contacto && (
-                      <p className="text-xs text-emerald-500 mt-1">{pqrsd.dependencia_asignada_info.email_contacto}</p>
+                      <p className="text-xs text-blue-500 mt-1">{pqrsd.dependencia_asignada_info.email_contacto}</p>
                     )}
                   </div>
                 ) : (

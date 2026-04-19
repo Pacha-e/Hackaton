@@ -14,7 +14,7 @@ const estadoConfig: Record<string, { label: string; icon: typeof CheckCircle; co
   en_clasificacion: { label: 'En Clasificación', icon: Clock, color: 'text-amber-600', bg: 'bg-amber-100' },
   clasificada: { label: 'Clasificada', icon: CheckCircle, color: 'text-blue-600', bg: 'bg-blue-100' },
   en_tramite: { label: 'En Trámite', icon: Clock, color: 'text-indigo-600', bg: 'bg-indigo-100' },
-  respondida: { label: 'Respondida', icon: CheckCircle, color: 'text-emerald-600', bg: 'bg-emerald-100' },
+  respondida: { label: 'Respondida', icon: CheckCircle, color: 'text-blue-600', bg: 'bg-blue-100' },
   cerrada: { label: 'Cerrada', icon: CheckCircle, color: 'text-slate-500', bg: 'bg-slate-100' },
 }
 
@@ -53,8 +53,8 @@ export default function StatusPage() {
 
       <div className="max-w-2xl mx-auto px-4 py-12">
         <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-[#00a859]/10 rounded-xl flex items-center justify-center mx-auto mb-3">
-            <Search className="h-6 w-6 text-[#00a859]" />
+          <div className="w-12 h-12 bg-[#0693E3]/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+            <Search className="h-6 w-6 text-[#0693E3]" />
           </div>
           <h1 className="text-2xl font-bold text-slate-800 mb-1">Consultar Estado de PQRSD</h1>
           <p className="text-slate-500 text-sm">Ingresa tu número de radicado para ver el estado de tu solicitud</p>
@@ -125,7 +125,7 @@ export default function StatusPage() {
                 <CardContent className="pt-5 pb-5 space-y-3">
                   <div className="flex items-center justify-between text-sm">
                     <span className="font-medium text-slate-700">Plazo de respuesta (Ley 1755/2015)</span>
-                    <span className={`font-bold ${pqrsd.vencida ? 'text-red-600' : pqrsd.en_alerta ? 'text-amber-600' : 'text-[#00a859]'}`}>
+                    <span className={`font-bold ${pqrsd.vencida ? 'text-red-600' : pqrsd.en_alerta ? 'text-amber-600' : 'text-[#0693E3]'}`}>
                       {pqrsd.vencida
                         ? 'Vencido'
                         : pqrsd.estado === 'respondida'
@@ -142,7 +142,7 @@ export default function StatusPage() {
                             ? 'bg-red-500 w-full'
                             : pqrsd.en_alerta
                             ? 'bg-amber-500'
-                            : 'bg-[#00a859]'
+                            : 'bg-[#0693E3]'
                         }`}
                         style={{
                           width: pqrsd.vencida
@@ -164,7 +164,7 @@ export default function StatusPage() {
                       Vence el {formatDate(pqrsd.fecha_limite)}. La entidad está en proceso de respuesta.
                     </div>
                   ) : pqrsd.estado === 'respondida' ? (
-                    <div className="flex items-center gap-2 text-xs text-emerald-600">
+                    <div className="flex items-center gap-2 text-xs text-blue-600">
                       <CheckCircle className="h-3.5 w-3.5 shrink-0" />
                       Respondida el {formatDateTime(pqrsd.fecha_respuesta)}
                     </div>
@@ -192,21 +192,21 @@ export default function StatusPage() {
                         <div className="flex flex-col items-center">
                           <div className={`w-7 h-7 rounded-full flex items-center justify-center border-2 transition-colors ${
                             done
-                              ? 'bg-[#00a859] border-[#00a859]'
+                              ? 'bg-[#0693E3] border-[#0693E3]'
                               : 'bg-white border-slate-300'
-                          } ${current ? 'ring-2 ring-[#00a859]/30' : ''}`}>
+                          } ${current ? 'ring-2 ring-[#0693E3]/30' : ''}`}>
                             {done ? (
                               <CheckCircle className="h-4 w-4 text-white" />
                             ) : (
                               <div className="w-2 h-2 bg-slate-300 rounded-full" />
                             )}
                           </div>
-                          <span className={`text-xs mt-1 text-center w-16 leading-tight ${done ? 'text-[#00a859] font-medium' : 'text-slate-400'}`}>
+                          <span className={`text-xs mt-1 text-center w-16 leading-tight ${done ? 'text-[#0693E3] font-medium' : 'text-slate-400'}`}>
                             {cfg2?.label}
                           </span>
                         </div>
                         {i < timelineSteps.length - 1 && (
-                          <div className={`flex-1 h-0.5 mx-1 mb-4 ${i < currentStepIndex ? 'bg-[#00a859]' : 'bg-slate-200'}`} />
+                          <div className={`flex-1 h-0.5 mx-1 mb-4 ${i < currentStepIndex ? 'bg-[#0693E3]' : 'bg-slate-200'}`} />
                         )}
                       </div>
                     )

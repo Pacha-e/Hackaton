@@ -161,8 +161,8 @@ export default function PqrsdListPage() {
                     onClick={() => updateFilter(chip.key, active ? '' : chip.value)}
                     className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
                       active
-                        ? 'bg-[#00a859] border-[#00a859] text-white'
-                        : 'bg-white border-slate-300 text-slate-600 hover:border-[#00a859] hover:text-[#00a859]'
+                        ? 'bg-[#0693E3] border-[#0693E3] text-white'
+                        : 'bg-white border-slate-300 text-slate-600 hover:border-[#0693E3] hover:text-[#0693E3]'
                     }`}
                   >
                     {chip.label}
@@ -192,7 +192,7 @@ export default function PqrsdListPage() {
             <div className="bg-white rounded-xl border border-slate-200 p-12 text-center">
               <Search className="h-10 w-10 text-slate-300 mx-auto mb-3" />
               <p className="text-slate-500">No se encontraron solicitudes con los filtros seleccionados.</p>
-              <button onClick={clearFilters} className="mt-2 text-sm text-[#00a859] hover:underline">Limpiar filtros</button>
+              <button onClick={clearFilters} className="mt-2 text-sm text-[#0693E3] hover:underline">Limpiar filtros</button>
             </div>
           ) : (
             <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
@@ -273,7 +273,7 @@ export default function PqrsdListPage() {
                       <td className="px-4 py-3">
                         <Link
                           to={`/staff/pqrsd/${p.id}`}
-                          className="flex items-center gap-1 text-xs text-[#00a859] hover:text-[#008f4c] font-medium"
+                          className="flex items-center gap-1 text-xs text-[#0693E3] hover:text-[#0578C5] font-medium"
                         >
                           Ver <ArrowRight className="h-3 w-3" />
                         </Link>

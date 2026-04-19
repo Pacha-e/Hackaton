@@ -16,7 +16,7 @@ import { formatRelativeTime } from '@/lib/utils'
 
 const CANALES = [
   { value: '', label: 'Todos los canales' },
-  { value: 'whatsapp', label: 'WhatsApp', color: 'bg-green-500' },
+  { value: 'whatsapp', label: 'WhatsApp', color: 'bg-blue-500' },
   { value: 'email', label: 'Email', color: 'bg-purple-500' },
   { value: 'web', label: 'Web', color: 'bg-blue-500' },
   { value: 'instagram', label: 'Instagram', color: 'bg-pink-500' },
@@ -50,7 +50,7 @@ export default function InboxPage() {
         <div className="bg-white border-b border-slate-200 px-8 py-5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Inbox className="h-5 w-5 text-[#00a859]" />
+              <Inbox className="h-5 w-5 text-[#0693E3]" />
               <div>
                 <h1 className="text-xl font-bold text-slate-800">Bandeja Multicanal</h1>
                 <p className="text-sm text-slate-500">
@@ -64,8 +64,8 @@ export default function InboxPage() {
                 onClick={() => setSoloNoLeidos(!soloNoLeidos)}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm border transition-colors ${
                   soloNoLeidos
-                    ? 'bg-[#00a859] border-[#00a859] text-white'
-                    : 'bg-white border-slate-300 text-slate-600 hover:border-[#00a859]'
+                    ? 'bg-[#0693E3] border-[#0693E3] text-white'
+                    : 'bg-white border-slate-300 text-slate-600 hover:border-[#0693E3]'
                 }`}
               >
                 <Circle className="h-3 w-3" />
@@ -96,7 +96,7 @@ export default function InboxPage() {
                   onClick={() => setSelectedCanal(canal.value)}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition-colors ${
                     selectedCanal === canal.value
-                      ? 'bg-[#00a859] text-white'
+                      ? 'bg-[#0693E3] text-white'
                       : 'text-slate-600 hover:bg-slate-100'
                   }`}
                 >
@@ -176,14 +176,14 @@ export default function InboxPage() {
                           </span>
                         )}
                         {msg.clasificacion_validada && (
-                          <span className="flex items-center gap-0.5 text-xs text-emerald-600">
+                          <span className="flex items-center gap-0.5 text-xs text-blue-600">
                             <CheckCircle className="h-3 w-3" /> Clasificado
                           </span>
                         )}
                       </div>
                     </div>
 
-                    <ArrowRight className="h-4 w-4 text-slate-300 group-hover:text-[#00a859] transition-colors mt-1 shrink-0" />
+                    <ArrowRight className="h-4 w-4 text-slate-300 group-hover:text-[#0693E3] transition-colors mt-1 shrink-0" />
                   </Link>
                 ))}
               </div>

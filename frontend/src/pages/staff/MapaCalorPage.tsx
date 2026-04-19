@@ -131,7 +131,7 @@ export default function MapaCalorPage() {
             </div>
             {data && (
               <div className="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-full">
-                <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
                 {data.total} PQRSD totales · actualización cada 60s
               </div>
             )}

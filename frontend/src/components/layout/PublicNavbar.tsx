@@ -10,17 +10,17 @@ export function PublicNavbar() {
   const isActive = (path: string) => location.pathname === path
 
   return (
-    <nav className="bg-[#1a3a2a] text-white shadow-lg sticky top-0 z-50">
+    <nav className="bg-[#0d1b6e] text-white shadow-lg sticky top-0 z-50">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-3 hover:opacity-90 transition-opacity">
-            <div className="w-9 h-9 bg-[#00a859] rounded-lg flex items-center justify-center">
+            <div className="w-9 h-9 bg-[#0693E3] rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">MDE</span>
             </div>
             <div className="hidden sm:block">
               <p className="text-sm font-semibold leading-tight">Alcaldía de Medellín</p>
-              <p className="text-xs text-emerald-300 leading-tight">Sistema PQRSD</p>
+              <p className="text-xs text-blue-300 leading-tight">Sistema PQRSD</p>
             </div>
           </Link>
 
@@ -30,7 +30,7 @@ export function PublicNavbar() {
               to="/"
               className={cn(
                 'px-4 py-2 rounded-lg text-sm font-medium transition-colors',
-                isActive('/') ? 'bg-[#00a859] text-white' : 'text-slate-300 hover:bg-white/10'
+                isActive('/') ? 'bg-[#0693E3] text-white' : 'text-slate-300 hover:bg-white/10'
               )}
             >
               Inicio
@@ -39,7 +39,7 @@ export function PublicNavbar() {
               to="/radicar"
               className={cn(
                 'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
-                isActive('/radicar') ? 'bg-[#00a859] text-white' : 'text-slate-300 hover:bg-white/10'
+                isActive('/radicar') ? 'bg-[#0693E3] text-white' : 'text-slate-300 hover:bg-white/10'
               )}
             >
               <FileText className="h-4 w-4" />
@@ -49,7 +49,7 @@ export function PublicNavbar() {
               to="/consultar"
               className={cn(
                 'flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors',
-                isActive('/consultar') ? 'bg-[#00a859] text-white' : 'text-slate-300 hover:bg-white/10'
+                isActive('/consultar') ? 'bg-[#0693E3] text-white' : 'text-slate-300 hover:bg-white/10'
               )}
             >
               <Search className="h-4 w-4" />

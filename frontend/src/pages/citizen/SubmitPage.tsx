@@ -42,7 +42,7 @@ const TIPO_CONFIG: Record<string, { icon: typeof MessageSquare; color: string; b
   peticion: { icon: MessageSquare, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', plazo: '15 días hábiles' },
   queja: { icon: AlertTriangle, color: 'text-amber-600', bg: 'bg-amber-50', border: 'border-amber-200', plazo: '15 días hábiles' },
   reclamo: { icon: Shield, color: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200', plazo: '15 días hábiles' },
-  sugerencia: { icon: Lightbulb, color: 'text-emerald-600', bg: 'bg-emerald-50', border: 'border-emerald-200', plazo: 'Sin plazo obligatorio' },
+  sugerencia: { icon: Lightbulb, color: 'text-blue-600', bg: 'bg-blue-50', border: 'border-blue-200', plazo: 'Sin plazo obligatorio' },
   denuncia: { icon: HelpCircle, color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-200', plazo: 'Varía según caso' },
   correspondencia: { icon: Mail, color: 'text-slate-600', bg: 'bg-slate-50', border: 'border-slate-200', plazo: '15 días hábiles' },
 }
@@ -90,26 +90,26 @@ function StepIndicator({ current }: { current: number }) {
             <div className="flex flex-col items-center">
               <div className={`w-9 h-9 rounded-full flex items-center justify-center border-2 transition-all duration-300 ${
                 done
-                  ? 'bg-[#00a859] border-[#00a859]'
+                  ? 'bg-[#0693E3] border-[#0693E3]'
                   : active
-                  ? 'bg-white border-[#00a859] shadow-md shadow-emerald-100'
+                  ? 'bg-white border-[#0693E3] shadow-md shadow-emerald-100'
                   : 'bg-white border-slate-200'
               }`}>
                 {done ? (
                   <CheckCircle className="h-5 w-5 text-white" />
                 ) : (
-                  <step.icon className={`h-4 w-4 ${active ? 'text-[#00a859]' : 'text-slate-300'}`} />
+                  <step.icon className={`h-4 w-4 ${active ? 'text-[#0693E3]' : 'text-slate-300'}`} />
                 )}
               </div>
               <span className={`text-xs mt-1 font-medium hidden sm:block ${
-                active ? 'text-[#00a859]' : done ? 'text-slate-500' : 'text-slate-300'
+                active ? 'text-[#0693E3]' : done ? 'text-slate-500' : 'text-slate-300'
               }`}>
                 {step.label}
               </span>
             </div>
             {i < STEPS.length - 1 && (
               <div className={`w-12 sm:w-20 h-0.5 mx-1 mb-4 transition-colors duration-300 ${
-                done ? 'bg-[#00a859]' : 'bg-slate-200'
+                done ? 'bg-[#0693E3]' : 'bg-slate-200'
               }`} />
             )}
           </div>
@@ -208,8 +208,8 @@ export default function SubmitPage() {
       <div className="max-w-2xl mx-auto px-4 py-10">
         {/* Header */}
         <div className="text-center mb-6">
-          <div className="inline-flex items-center gap-2 bg-[#00a859]/10 border border-[#00a859]/20 rounded-full px-4 py-1.5 mb-3">
-            <span className="text-sm text-[#00a859] font-medium">Paso {step} de {STEPS.length}</span>
+          <div className="inline-flex items-center gap-2 bg-[#0693E3]/10 border border-[#0693E3]/20 rounded-full px-4 py-1.5 mb-3">
+            <span className="text-sm text-[#0693E3] font-medium">Paso {step} de {STEPS.length}</span>
           </div>
           <h1 className="text-2xl font-bold text-slate-800">
             {step === 1 && 'Tipo de solicitud'}
@@ -283,7 +283,7 @@ export default function SubmitPage() {
                     return (
                       <label key={opt.value} className={`flex items-center gap-2 px-4 py-2 rounded-lg border cursor-pointer transition-all text-sm font-medium ${
                         selected
-                          ? 'bg-[#1a3a2a] border-[#1a3a2a] text-white'
+                          ? 'bg-[#0d1b6e] border-[#0d1b6e] text-white'
                           : 'bg-white border-slate-200 text-slate-600 hover:border-slate-300'
                       }`}>
                         <input type="radio" value={opt.value} {...register('canal_entrada')} className="sr-only" />
@@ -310,11 +310,11 @@ export default function SubmitPage() {
               <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-4">
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold text-slate-700 flex items-center gap-2 text-sm">
-                    <User className="h-4 w-4 text-[#00a859]" />
+                    <User className="h-4 w-4 text-[#0693E3]" />
                     Información de contacto
                   </h3>
                   <label className="flex items-center gap-2 cursor-pointer select-none">
-                    <div className={`relative w-10 h-5 rounded-full transition-colors ${anonimo ? 'bg-[#00a859]' : 'bg-slate-300'}`}>
+                    <div className={`relative w-10 h-5 rounded-full transition-colors ${anonimo ? 'bg-[#0693E3]' : 'bg-slate-300'}`}>
                       <div className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${anonimo ? 'translate-x-5' : ''}`} />
                       <input type="checkbox" {...register('anonimo')} className="sr-only" />
                     </div>
@@ -362,7 +362,7 @@ export default function SubmitPage() {
 
               <div className="bg-white rounded-xl border border-slate-200 p-5 space-y-4">
                 <h3 className="font-semibold text-slate-700 flex items-center gap-2 text-sm">
-                  <MapPin className="h-4 w-4 text-[#00a859]" />
+                  <MapPin className="h-4 w-4 text-[#0693E3]" />
                   Ubicación <span className="text-slate-400 font-normal">(opcional)</span>
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -494,9 +494,9 @@ export default function SubmitPage() {
               </div>
 
               {/* Datos consent */}
-              <label className="flex items-start gap-3 p-4 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-[#00a859]/40 transition-colors group">
+              <label className="flex items-start gap-3 p-4 bg-white rounded-xl border border-slate-200 cursor-pointer hover:border-[#0693E3]/40 transition-colors group">
                 <div className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 transition-colors ${
-                  values.acepta_datos ? 'bg-[#00a859] border-[#00a859]' : 'border-slate-300 bg-white group-hover:border-[#00a859]'
+                  values.acepta_datos ? 'bg-[#0693E3] border-[#0693E3]' : 'border-slate-300 bg-white group-hover:border-[#0693E3]'
                 }`}>
                   {values.acepta_datos && <CheckCircle className="h-3.5 w-3.5 text-white" />}
                   <input type="checkbox" id="acepta_datos" className="sr-only" {...register('acepta_datos')} />

@@ -39,15 +39,15 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#1a3a2a] to-[#0f2a1c] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#0d1b6e] to-[#08155a] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-[#00a859] rounded-2xl mb-4 shadow-lg shadow-emerald-900/30">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-[#0693E3] rounded-2xl mb-4 shadow-lg shadow-blue-900/30">
             <Building2 className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white mb-1">Alcaldía de Medellín</h1>
-          <p className="text-emerald-300 text-sm">Sistema Inteligente PQRSD</p>
+          <p className="text-blue-300 text-sm">Sistema Inteligente PQRSD</p>
         </div>
 
         {/* Card */}
@@ -106,7 +106,7 @@ export default function LoginPage() {
 
         <p className="text-center text-xs text-slate-500 mt-6">
           Portal ciudadano:{' '}
-          <a href="/" className="text-emerald-300 hover:underline">Ir al inicio</a>
+          <a href="/" className="text-blue-300 hover:underline">Ir al inicio</a>
         </p>
       </div>
     </div>

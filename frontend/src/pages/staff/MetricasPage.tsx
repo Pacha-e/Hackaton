@@ -35,7 +35,7 @@ const TIPO_LABELS: Record<string, string> = {
   correspondencia: 'Correspondencia',
 }
 
-const TIPO_COLORS = ['#00a859', '#3b82f6', '#f97316', '#8b5cf6', '#ec4899', '#64748b']
+const TIPO_COLORS = ['#0693E3', '#3b82f6', '#f97316', '#8b5cf6', '#ec4899', '#64748b']
 
 export default function MetricasPage() {
   const { data: stats, isLoading } = useQuery<Stats>({
@@ -73,7 +73,7 @@ export default function MetricasPage() {
     { name: 'En Clasificación', value: stats.en_clasificacion, fill: '#f59e0b' },
     { name: 'Clasificadas', value: stats.clasificadas, fill: '#3b82f6' },
     { name: 'En Trámite', value: stats.en_tramite, fill: '#6366f1' },
-    { name: 'Respondidas', value: stats.respondidas, fill: '#00a859' },
+    { name: 'Respondidas', value: stats.respondidas, fill: '#0693E3' },
     { name: 'Cerradas', value: stats.cerradas, fill: '#374151' },
   ].filter(d => d.value > 0)
 
@@ -92,7 +92,7 @@ export default function MetricasPage() {
         {/* Header */}
         <div className="bg-white border-b border-slate-200 px-8 py-5">
           <div className="flex items-center gap-3">
-            <BarChart2 className="h-5 w-5 text-[#00a859]" />
+            <BarChart2 className="h-5 w-5 text-[#0693E3]" />
             <div>
               <h1 className="text-xl font-bold text-slate-800">Métricas del Sistema</h1>
               <p className="text-sm text-slate-500">Análisis de desempeño PQRSD</p>
@@ -105,7 +105,7 @@ export default function MetricasPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[
               { label: 'Total PQRSD', value: stats.total, icon: BarChart2, color: 'text-slate-600', bg: 'bg-slate-100' },
-              { label: 'Tasa de resolución', value: `${resolutionRate}%`, icon: TrendingUp, color: 'text-emerald-600', bg: 'bg-emerald-50' },
+              { label: 'Tasa de resolución', value: `${resolutionRate}%`, icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50' },
               { label: 'Cumplimiento SLA', value: `${slaCompliance}%`, icon: Clock, color: 'text-blue-600', bg: 'bg-blue-50' },
               { label: 'Respondidas', value: stats.respondidas, icon: CheckCircle, color: 'text-purple-600', bg: 'bg-purple-50' },
             ].map((kpi) => (
@@ -229,7 +229,7 @@ export default function MetricasPage() {
                     { label: 'PQRSD vencidas', value: stats.vencidas, color: 'text-red-600', bg: 'bg-red-50', bar: '#ef4444' },
                     { label: 'En alerta (≤3 días)', value: stats.alertas, color: 'text-amber-600', bg: 'bg-amber-50', bar: '#f59e0b' },
                     { label: 'Sin clasificar', value: stats.sin_clasificar, color: 'text-orange-600', bg: 'bg-orange-50', bar: '#f97316' },
-                    { label: 'Al día', value: Math.max(0, stats.total - stats.vencidas - stats.alertas), color: 'text-emerald-600', bg: 'bg-emerald-50', bar: '#00a859' },
+                    { label: 'Al día', value: Math.max(0, stats.total - stats.vencidas - stats.alertas), color: 'text-blue-600', bg: 'bg-blue-50', bar: '#0693E3' },
                   ].map((item) => (
                     <div key={item.label} className={`flex items-center justify-between p-3 rounded-lg ${item.bg}`}>
                       <span className={`text-sm font-medium ${item.color}`}>{item.label}</span>

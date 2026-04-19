@@ -124,8 +124,8 @@ export default function DashboardPage() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-xl font-bold text-slate-800">Dashboard PQRSD</h1>
-                <span className="flex items-center gap-1 text-xs text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-0.5 rounded-full">
-                  <span className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" />
+                <span className="flex items-center gap-1 text-xs text-blue-600 bg-blue-50 border border-blue-100 px-2 py-0.5 rounded-full">
+                  <span className="w-1.5 h-1.5 bg-blue-500 rounded-full animate-pulse" />
                   En vivo
                 </span>
               </div>
@@ -134,7 +134,7 @@ export default function DashboardPage() {
             <div className="flex items-center gap-3">
               <Link
                 to="/staff/inbox"
-                className="flex items-center gap-2 bg-[#00a859] hover:bg-[#008f4c] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+                className="flex items-center gap-2 bg-[#0693E3] hover:bg-[#0578C5] text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
               >
                 <Inbox className="h-4 w-4" />
                 Bandeja de entrada
@@ -183,7 +183,7 @@ export default function DashboardPage() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard label="Radicadas" value={stats.radicadas} icon={FileText} color="text-slate-500" bgColor="bg-slate-50" />
             <StatCard label="En trámite" value={stats.en_tramite} icon={Activity} color="text-blue-500" bgColor="bg-blue-50" />
-            <StatCard label="Respondidas" value={stats.respondidas} icon={CheckCircle} color="text-emerald-500" bgColor="bg-emerald-50" />
+            <StatCard label="Respondidas" value={stats.respondidas} icon={CheckCircle} color="text-blue-500" bgColor="bg-blue-50" />
             <StatCard label="Cerradas" value={stats.cerradas} icon={CheckCircle} color="text-slate-400" bgColor="bg-slate-50" />
           </div>
 
@@ -235,7 +235,7 @@ export default function DashboardPage() {
                       <XAxis dataKey="name" tick={{ fontSize: 11 }} />
                       <YAxis tick={{ fontSize: 11 }} />
                       <Tooltip />
-                      <Bar dataKey="value" fill="#00a859" radius={[4, 4, 0, 0]} name="Casos" />
+                      <Bar dataKey="value" fill="#0693E3" radius={[4, 4, 0, 0]} name="Casos" />
                     </BarChart>
                   </ResponsiveContainer>
                 ) : (
@@ -260,10 +260,10 @@ export default function DashboardPage() {
                         <Icon className={`h-5 w-5 ${color}`} />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm text-slate-800 group-hover:text-[#00a859] transition-colors">{title}</p>
+                        <p className="font-semibold text-sm text-slate-800 group-hover:text-[#0693E3] transition-colors">{title}</p>
                         <p className="text-xs text-slate-500 mt-0.5">{desc}</p>
                       </div>
-                      <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#00a859] transition-colors mt-1" />
+                      <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#0693E3] transition-colors mt-1" />
                     </div>
                   </CardContent>
                 </Card>

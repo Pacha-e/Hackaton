@@ -30,8 +30,8 @@ const scenarios: DemoScenario[] = [
     icon: MessageCircle,
     description: 'Simula un mensaje de ciudadano reportando huecos en la vía pública desde WhatsApp.',
     preview: '"Hola, quiero reportar que hay varios huecos muy peligrosos en la Carrera 76..."',
-    iconBg: 'bg-green-100',
-    iconColor: 'text-green-600',
+    iconBg: 'bg-blue-100',
+    iconColor: 'text-blue-600',
   },
   {
     canal: 'email',
@@ -180,7 +180,7 @@ export default function DemoPage() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <h2 className="font-semibold text-slate-800 flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-[#00a859]" />
+                  <CheckCircle className="h-4 w-4 text-[#0693E3]" />
                   Mensajes inyectados ({results.length})
                 </h2>
                 <button
@@ -193,7 +193,7 @@ export default function DemoPage() {
               </div>
               <div className="space-y-2">
                 {results.map((r, i) => (
-                  <div key={i} className="bg-white border border-emerald-200 rounded-xl p-4 flex items-center justify-between">
+                  <div key={i} className="bg-white border border-blue-200 rounded-xl p-4 flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <CanalIcon canal={r.canal} />
                       <div>
@@ -203,7 +203,7 @@ export default function DemoPage() {
                     </div>
                     <Link
                       to={`/staff/pqrsd/${r.id}`}
-                      className="flex items-center gap-1 text-sm text-[#00a859] hover:text-[#008f4c] font-medium"
+                      className="flex items-center gap-1 text-sm text-[#0693E3] hover:text-[#0578C5] font-medium"
                     >
                       Ver PQRSD <ArrowRight className="h-4 w-4" />
                     </Link>
@@ -230,7 +230,7 @@ export default function DemoPage() {
                   { n: '7', label: 'Respuesta y cierre', desc: 'El ciudadano puede consultar el estado en cualquier momento.' },
                 ].map((step) => (
                   <li key={step.n} className="flex items-start gap-3">
-                    <span className="w-6 h-6 bg-[#00a859] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
+                    <span className="w-6 h-6 bg-[#0693E3] text-white rounded-full flex items-center justify-center text-xs font-bold shrink-0 mt-0.5">
                       {step.n}
                     </span>
                     <div>

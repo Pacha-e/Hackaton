@@ -45,9 +45,9 @@ const pqrsdTypes = [
     label: 'Sugerencia',
     icon: Lightbulb,
     color: 'emerald',
-    bg: 'bg-emerald-50',
-    iconColor: 'text-emerald-500',
-    border: 'border-emerald-100',
+    bg: 'bg-blue-50',
+    iconColor: 'text-blue-500',
+    border: 'border-blue-100',
     desc: 'Propone mejoras para optimizar la gestión de la Alcaldía.',
     plazo: 'Sin plazo obligatorio',
   },
@@ -96,15 +96,15 @@ export default function HomePage() {
       <PublicNavbar />
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-[#1a3a2a] via-[#1e4433] to-[#0f2a1c] text-white py-20 px-4">
+      <section className="bg-gradient-to-br from-[#0d1b6e] via-[#0d2380] to-[#08155a] text-white py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-[#00a859]/20 border border-[#00a859]/30 rounded-full px-4 py-1.5 mb-6">
-            <div className="w-2 h-2 bg-[#00a859] rounded-full animate-pulse" />
-            <span className="text-sm text-emerald-300 font-medium">Sistema inteligente de atención ciudadana</span>
+          <div className="inline-flex items-center gap-2 bg-[#0693E3]/20 border border-[#0693E3]/30 rounded-full px-4 py-1.5 mb-6">
+            <div className="w-2 h-2 bg-[#0693E3] rounded-full animate-pulse" />
+            <span className="text-sm text-blue-300 font-medium">Sistema inteligente de atención ciudadana</span>
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
             Tus peticiones, quejas y reclamos{' '}
-            <span className="text-[#00a859]">atendidos con IA</span>
+            <span className="text-[#0693E3]">atendidos con IA</span>
           </h1>
           <p className="text-lg text-slate-300 max-w-2xl mx-auto mb-8">
             La Alcaldía de Medellín moderniza su sistema PQRSD con inteligencia artificial
@@ -113,7 +113,7 @@ export default function HomePage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               to="/radicar"
-              className="inline-flex items-center gap-2 bg-[#00a859] hover:bg-[#008f4c] text-white px-8 py-4 rounded-xl font-semibold text-lg transition-colors shadow-lg shadow-emerald-900/30"
+              className="inline-flex items-center gap-2 bg-[#0693E3] hover:bg-[#0578C5] text-white px-8 py-4 rounded-xl font-semibold text-lg transition-colors shadow-lg shadow-blue-900/30"
             >
               Radicar PQRSD
               <ArrowRight className="h-5 w-5" />
@@ -138,7 +138,7 @@ export default function HomePage() {
             { value: 'IA + Humano', label: 'Clasificación inteligente' },
           ].map((s) => (
             <div key={s.label}>
-              <p className="text-xl font-bold text-[#00a859]">{s.value}</p>
+              <p className="text-xl font-bold text-[#0693E3]">{s.value}</p>
               <p className="text-xs text-slate-500 mt-0.5">{s.label}</p>
             </div>
           ))}
@@ -165,7 +165,7 @@ export default function HomePage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
                     <h3 className="font-semibold text-slate-800">{t.label}</h3>
-                    <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#00a859] transition-colors" />
+                    <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-[#0693E3] transition-colors" />
                   </div>
                   <p className="text-sm text-slate-600 mb-2">{t.desc}</p>
                   <div className="flex items-center gap-1 text-xs text-slate-500">
@@ -180,7 +180,7 @@ export default function HomePage() {
         <div className="text-center mt-6">
           <Link
             to="/radicar"
-            className="inline-flex items-center gap-2 bg-[#00a859] hover:bg-[#008f4c] text-white px-8 py-3 rounded-xl font-semibold transition-colors shadow-sm"
+            className="inline-flex items-center gap-2 bg-[#0693E3] hover:bg-[#0578C5] text-white px-8 py-3 rounded-xl font-semibold transition-colors shadow-sm"
           >
             Iniciar mi PQRSD
             <ArrowRight className="h-4 w-4" />
@@ -198,7 +198,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {steps.map((s, i) => (
               <div key={i} className="text-center">
-                <div className="w-12 h-12 bg-[#00a859] rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">
+                <div className="w-12 h-12 bg-[#0693E3] rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-3">
                   {s.n}
                 </div>
                 <h3 className="font-semibold text-slate-800 mb-1">{s.title}</h3>
@@ -218,8 +218,8 @@ export default function HomePage() {
         <div className="flex flex-wrap justify-center gap-4">
           {channels.map((ch) => (
             <div key={ch.label} className="flex flex-col items-center gap-2 p-4 bg-white rounded-xl border border-slate-200 w-36 hover:shadow-md transition-shadow">
-              <div className="w-10 h-10 bg-emerald-50 rounded-lg flex items-center justify-center">
-                <ch.icon className="h-5 w-5 text-[#00a859]" />
+              <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+                <ch.icon className="h-5 w-5 text-[#0693E3]" />
               </div>
               <p className="font-medium text-sm text-slate-700">{ch.label}</p>
               <p className="text-xs text-slate-500 text-center">{ch.desc}</p>
@@ -229,15 +229,15 @@ export default function HomePage() {
       </section>
 
       {/* Legal note */}
-      <section className="bg-[#1a3a2a] text-white py-8">
+      <section className="bg-[#0d1b6e] text-white py-8">
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center gap-4 justify-between">
           <div className="flex items-center gap-3">
-            <CheckCircle className="h-5 w-5 text-[#00a859] shrink-0" />
+            <CheckCircle className="h-5 w-5 text-[#0693E3] shrink-0" />
             <p className="text-sm text-slate-300">
               Ley 1755 de 2015 — Derecho de Petición | Decreto 883 de 2015 — Alcaldía de Medellín
             </p>
           </div>
-          <Link to="/radicar" className="shrink-0 bg-[#00a859] hover:bg-[#008f4c] text-white px-6 py-2.5 rounded-lg font-medium text-sm transition-colors">
+          <Link to="/radicar" className="shrink-0 bg-[#0693E3] hover:bg-[#0578C5] text-white px-6 py-2.5 rounded-lg font-medium text-sm transition-colors">
             Radicar ahora
           </Link>
         </div>

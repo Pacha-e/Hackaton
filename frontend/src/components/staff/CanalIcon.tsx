@@ -2,7 +2,7 @@ import { MessageCircle, Mail, Globe, Hash, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const config: Record<string, { icon: typeof Globe; color: string; bg: string; label: string }> = {
-  whatsapp: { icon: MessageCircle, color: 'text-emerald-600', bg: 'bg-emerald-100', label: 'WhatsApp' },
+  whatsapp: { icon: MessageCircle, color: 'text-blue-600', bg: 'bg-blue-100', label: 'WhatsApp' },
   email: { icon: Mail, color: 'text-gray-600', bg: 'bg-gray-100', label: 'Email' },
   web: { icon: Globe, color: 'text-blue-600', bg: 'bg-blue-100', label: 'Portal Web' },
   instagram: { icon: Hash, color: 'text-pink-600', bg: 'bg-pink-100', label: 'Instagram' },

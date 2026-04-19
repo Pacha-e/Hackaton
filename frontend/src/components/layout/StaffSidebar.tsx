@@ -28,19 +28,19 @@ export function StaffSidebar({ collapsed = false }: StaffSidebarProps) {
 
   return (
     <aside className={cn(
-      'bg-[#1a3a2a] text-white flex flex-col transition-all duration-200',
+      'bg-[#0d1b6e] text-white flex flex-col transition-all duration-200',
       collapsed ? 'w-16' : 'w-64'
     )}>
       {/* Logo */}
       <div className="p-4 border-b border-white/10">
         <Link to="/staff/dashboard" className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-[#00a859] rounded-lg flex items-center justify-center shrink-0">
+          <div className="w-9 h-9 bg-[#0693E3] rounded-lg flex items-center justify-center shrink-0">
             <span className="text-white font-bold text-sm">MDE</span>
           </div>
           {!collapsed && (
             <div>
               <p className="text-sm font-semibold leading-tight">Alcaldía</p>
-              <p className="text-xs text-emerald-300">Panel PQRSD</p>
+              <p className="text-xs text-blue-300">Panel PQRSD</p>
             </div>
           )}
         </Link>
@@ -50,12 +50,12 @@ export function StaffSidebar({ collapsed = false }: StaffSidebarProps) {
       {!collapsed && (
         <div className="px-4 py-3 border-b border-white/10">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 bg-gradient-to-br from-[#00a859] to-[#006b3c] rounded-full flex items-center justify-center text-sm font-bold ring-2 ring-white/20 shrink-0">
+            <div className="w-9 h-9 bg-gradient-to-br from-[#0693E3] to-[#054FA8] rounded-full flex items-center justify-center text-sm font-bold ring-2 ring-white/20 shrink-0">
               {user?.fullName?.charAt(0)?.toUpperCase() || '?'}
             </div>
             <div className="min-w-0">
               <p className="text-sm font-semibold truncate leading-tight">{user?.fullName || 'Funcionario'}</p>
-              <p className="text-xs text-emerald-300 leading-tight">{user?.username || 'Sistema PQRSD'}</p>
+              <p className="text-xs text-blue-300 leading-tight">{user?.username || 'Sistema PQRSD'}</p>
             </div>
           </div>
         </div>
@@ -70,7 +70,7 @@ export function StaffSidebar({ collapsed = false }: StaffSidebarProps) {
             className={cn(
               'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors group',
               isActive(href)
-                ? 'bg-[#00a859] text-white'
+                ? 'bg-[#0693E3] text-white'
                 : 'text-slate-300 hover:bg-white/10 hover:text-white'
             )}
             title={collapsed ? label : undefined}

@@ -34,12 +34,12 @@ export default function ConfirmationPage() {
         {/* Success card */}
         <div className="bg-white rounded-2xl border border-slate-200 shadow-lg overflow-hidden">
           {/* Green header */}
-          <div className="bg-gradient-to-br from-[#00a859] to-[#008f4c] p-8 text-white text-center">
+          <div className="bg-gradient-to-br from-[#0693E3] to-[#0578C5] p-8 text-white text-center">
             <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <CheckCircle className="h-9 w-9 text-white" />
             </div>
             <h1 className="text-2xl font-bold mb-1">¡PQRSD Radicada!</h1>
-            <p className="text-emerald-100 text-sm">Tu solicitud fue registrada exitosamente</p>
+            <p className="text-blue-100 text-sm">Tu solicitud fue registrada exitosamente</p>
           </div>
 
           <div className="p-6 space-y-6">
@@ -50,10 +50,10 @@ export default function ConfirmationPage() {
                 <span className="text-2xl font-mono font-bold text-slate-800">{actualRadicado}</span>
                 <button
                   onClick={copyRadicado}
-                  className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-[#00a859] transition-colors"
+                  className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-[#0693E3] transition-colors"
                   title="Copiar número"
                 >
-                  {copied ? <CheckCircle className="h-4 w-4 text-[#00a859]" /> : <Copy className="h-4 w-4" />}
+                  {copied ? <CheckCircle className="h-4 w-4 text-[#0693E3]" /> : <Copy className="h-4 w-4" />}
                 </button>
               </div>
             </div>
@@ -69,9 +69,9 @@ export default function ConfirmationPage() {
                   <p className="text-xs text-slate-500 mb-1">Fecha límite de respuesta</p>
                   <p className="text-sm font-medium text-slate-800">{formatDate(state.fecha_limite)}</p>
                 </div>
-                <div className="col-span-2 bg-emerald-50 border border-emerald-100 rounded-lg p-3">
-                  <p className="text-xs text-emerald-600 mb-1">Estado actual</p>
-                  <p className="text-sm font-semibold text-emerald-700">Radicada — en proceso de clasificación</p>
+                <div className="col-span-2 bg-blue-50 border border-blue-100 rounded-lg p-3">
+                  <p className="text-xs text-blue-600 mb-1">Estado actual</p>
+                  <p className="text-sm font-semibold text-blue-700">Radicada — en proceso de clasificación</p>
                 </div>
               </div>
             )}
@@ -79,7 +79,7 @@ export default function ConfirmationPage() {
             {/* Instructions */}
             <div className="space-y-2">
               <h3 className="text-sm font-semibold text-slate-700 flex items-center gap-2">
-                <Clock className="h-4 w-4 text-[#00a859]" />
+                <Clock className="h-4 w-4 text-[#0693E3]" />
                 Próximos pasos
               </h3>
               <ol className="space-y-2 text-sm text-slate-600">
@@ -90,7 +90,7 @@ export default function ConfirmationPage() {
                   'Puedes consultar el estado en cualquier momento con tu número de radicado.',
                 ].map((s, i) => (
                   <li key={i} className="flex items-start gap-2">
-                    <span className="w-5 h-5 bg-[#00a859] text-white rounded-full flex items-center justify-center text-xs shrink-0 mt-0.5">
+                    <span className="w-5 h-5 bg-[#0693E3] text-white rounded-full flex items-center justify-center text-xs shrink-0 mt-0.5">
                       {i + 1}
                     </span>
                     {s}
@@ -126,7 +126,7 @@ export default function ConfirmationPage() {
         </div>
 
         <div className="mt-6 text-center">
-          <Link to="/" className="text-sm text-[#00a859] hover:underline inline-flex items-center gap-1">
+          <Link to="/" className="text-sm text-[#0693E3] hover:underline inline-flex items-center gap-1">
             Volver al inicio
             <ArrowRight className="h-3 w-3" />
           </Link>
