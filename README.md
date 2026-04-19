@@ -1,104 +1,131 @@
 # PQRSD Medellín — OmegaHack 2026 (Grupo NOVA / EAFIT)
 
-Stack unificado: **Django 4.2** (PQRSD + IA Gemini), **API REST** (`/api/v1/`) y **Chatwoot** en Docker.
+Sistema inteligente de gestión de PQRSD para la Secretaría de Desarrollo Económico de Medellín.  
+Pipeline de 9 agentes Claude (Haiku · Sonnet · Opus) que procesa peticiones ciudadanas end-to-end.
 
-## Qué tienes que hacer tú (solo esto)
+## Stack
 
-1. Abre **PowerShell** o **CMD**.
-2. Ve a la carpeta del proyecto (ajusta la ruta si la tuya es distinta):
+| Capa | Tecnología |
+|------|-----------|
+| Backend | Django 4.2 + Django REST Framework 3.15 |
+| Base de datos | PostgreSQL 15 |
+| Frontend | React 19 + TypeScript + Vite + Tailwind CSS 4 |
+| IA | Anthropic Claude (Haiku / Sonnet / Opus) |
+| Infra | Docker Compose |
 
-```powershell
-cd C:\Users\EMMANUEL\hackathon
+## Requisitos
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (incluye Docker Compose)
+- [Make](https://gnuwin32.sourceforge.net/packages/make.htm) (Windows: instalar via `winget install GnuWin32.Make`)
+- Clave de API de Anthropic → [console.anthropic.com](https://console.anthropic.com)
+
+## Setup en un comando
+
+```bash
+cp .env.example .env      # copia la configuración base
+# edita .env y pon tu ANTHROPIC_API_KEY
+make setup                # build + migraciones + datos demo
 ```
 
-3. Crea el `.env` de Django si aún no existe: copia `.env.example` y renómbralo a `.env` (o `copy .env.example .env`).
-4. Arranca **todo** (Django + Chatwoot). La primera vez puede tardar **varios minutos** porque Chatwoot ejecuta solo `rails db:chatwoot_prepare` antes de levantar la web.
+Eso es todo. En 2–3 minutos el sistema estará levantado.
 
-```powershell
-docker compose up --build -d
+## URLs
+
+| Servicio | URL | Descripción |
+|----------|-----|-------------|
+| Portal ciudadano | http://localhost:8090/pqrsd/ | Radicar y consultar PQRSD |
+| Dashboard staff | http://localhost:8090/funcionarios/ | Gestión y clasificación |
+| API REST | http://localhost:8090/api/v1/ | Todos los endpoints |
+| SPA React | http://localhost:5175/ | Interfaz staff moderna |
+
+## Usuarios demo
+
+| Usuario | Contraseña | Rol |
+|---------|-----------|-----|
+| `admin` | `admin1234` | Superusuario |
+| `enlace1` | `pqrsd2026` | Enlace PQRSD |
+| `juridico1` | `pqrsd2026` | Asesor Jurídico |
+
+## Comandos Make
+
+```bash
+make help        # ver todos los comandos disponibles
+
+# Ciclo de vida
+make run         # levantar servicios
+make stop        # detener servicios
+make restart     # reiniciar servicios
+make logs        # ver logs en tiempo real
+make build       # reconstruir imágenes
+
+# Desarrollo
+make shell       # Django shell (manage.py shell)
+make bash        # bash dentro del contenedor web
+make test        # correr tests
+
+# Base de datos
+make migrate     # makemigrations + migrate
+make seed        # cargar datos demo (idempotente)
+make reset       # flush + migrate + seed
+make clean       # eliminar contenedores y volúmenes
 ```
 
-5. Migraciones y datos de prueba de Django:
+## Pipeline de agentes IA
 
-```powershell
-docker compose exec web python manage.py migrate
-docker compose exec web python manage.py seed_data
+Cada PQRSD que entra pasa por 9 agentes en secuencia:
+
+```
+M1 IntakeAgent   (Haiku)  → Normalización multi-canal
+M3 FilterAgent   (Haiku)  → Admisibilidad (lenguaje, duplicados, claridad)
+M8 SLAAgent      (Haiku)  → Cálculo de plazos en días hábiles (Ley 1755/2015)
+M4 SplitterAgent (Sonnet) → División de PQRSDs compuestas multi-secretaría
+M2 RouterAgent   (Sonnet) → Enrutamiento a 26 secretarías (Decreto 883/2015)
+M9 PrivacyAgent  (Sonnet) → Habeas Data y anonimización (Ley 1581/2012)
+M6 KnowledgeAgent(Sonnet) → Banco de precedentes con scoring semántico
+M5 ResponseAgent (Opus)   → Respuesta humanizada anti-alucinación
+M7 DeliveryAgent (Haiku)  → Entrega multi-canal con confirmación
 ```
 
-6. Abre en el navegador:
-   - Django: http://localhost:8090  
-   - API: http://localhost:8090/api/v1/  
-   - Chatwoot: http://localhost:3000  
+### Endpoints del pipeline
 
-**No hace falta** ejecutar comandos raros de Chatwoot a mano: el servicio `chatwoot_db_prepare` en `docker-compose.yml` prepara la base de datos antes de `chatwoot_rails` y `chatwoot_sidekiq`.
-
-Si algo falla, mira los mensajes:
-
-```powershell
-docker compose logs chatwoot_db_prepare --tail 100
-docker compose logs chatwoot_rails --tail 100
+```http
+POST /api/v1/pqrsd/submit-pipeline/    # Radicar + procesar en un paso (ciudadano)
+POST /api/v1/pqrsd/<pk>/pipeline/      # Re-procesar una PQRSD existente (staff)
 ```
 
-## Tabla de URLs
+Requiere `ANTHROPIC_API_KEY` en `.env`. Si no está configurada, los endpoints devuelven `503`.
 
-| Servicio | URL |
-|----------|-----|
-| Django (app web) | http://localhost:8090 |
-| API (índice JSON) | http://localhost:8090/api/v1/ |
-| Chatwoot | http://localhost:3000 |
+## Estructura del proyecto
 
-La base de datos de Django expone el puerto **5434** en el PC. Chatwoot usa su propio Postgres dentro de Docker (`chatwoot_postgres`).
-
-## Conectar Chatwoot con Django (webhook + agente Gemini)
-
-Cada **mensaje entrante** del ciudadano en Chatwoot puede crear una **PQRSD** en Django y disparar la **misma clasificación con Gemini** que usarías en el panel (`/clasificacion/` o API `POST /api/v1/pqrsd/<id>/classify/`).
-
-1. En `.env` de Django: `GEMINI_API_KEY` (Google AI Studio). Sin clave, el agente usa modo **simulado** (primera dependencia activa).
-2. Opcional: `CHATWOOT_AUTO_CLASIFICAR=False` si solo quieres radicar sin llamar a Gemini.
-3. Opcional: `CHATWOOT_WEBHOOK_SECRET=un_secreto` y en Chatwoot añade cabecera `X-Webhook-Token: un_secreto`.
-4. En Chatwoot (como admin): **Ajustes → Integraciones → Webhooks** (o *Applications → Webhooks* según versión). Crea un webhook:
-   - **URL:** `http://host.docker.internal:8090/api/v1/integrations/chatwoot/`
-   - **Eventos:** al menos **`message_created`** (mensaje nuevo).
-   - En **Linux**, sustituye `host.docker.internal` por la IP de tu máquina en la red Docker (p. ej. `172.17.0.1`).
-5. Reinicia Django si cambiaste `.env`: `docker compose restart web`.
-
-La respuesta JSON del webhook incluye `radicado`, `clasificacion` (sugerencia IA) y `agente: "gemini"` cuando todo va bien. Los IDs de Chatwoot se guardan en `omnicanal_meta` del PQRSD (evita duplicar el mismo mensaje).
-
-Más contexto: `CLAUDE.md` en la raíz del repositorio.
-
-## Rama principal del repo: `feature/mvp-inicial`
-
-En `origin`, la rama por defecto es **`feature/mvp-inicial`** (no hay `main`). Ahí es donde conviene integrar el trabajo estable.
-
-Para traer cambios de otra rama (p. ej. `feature/ambiente-reparado`) a la principal:
-
-```powershell
-cd C:\Users\EMMANUEL\hackathon
-git checkout feature/mvp-inicial
-git pull origin feature/mvp-inicial
-git merge feature/ambiente-reparado
-git push origin feature/mvp-inicial
+```
+apps/
+  agentes/          ← 9 agentes Claude + orquestador
+  api/              ← REST API (16 endpoints)
+  clasificacion/    ← Clasificación IA con validación humana
+  conocimiento/     ← 26 dependencias + banco de precedentes
+  funcionarios/     ← Dashboard Django templates
+  pqrsd/            ← Modelo central PQRSD
+  sintesis/         ← Síntesis en 3 capas
+frontend/           ← SPA React
+config/             ← Settings Django
+Makefile            ← Comandos de desarrollo
+docker-compose.yml  ← 3 servicios: db, web, frontend
 ```
 
-Si aparecen conflictos, resuélvelos, `git add` los archivos y `git commit` para terminar el merge.
+## Marco legal
 
-## Si Chatwoot sigue en error
+- **Ley 1755/2015** — Derecho de Petición (plazos en días hábiles)
+- **Ley 1437/2011** — CPACA
+- **Ley 1581/2012** — Protección de datos personales (Habeas Data)
+- **Decreto Municipal 883/2015** — Competencias por secretaría, Alcaldía de Medellín
 
-1. Comprueba que terminó el prepare (sin error al final):
+## Variables de entorno
 
-```powershell
-docker compose logs chatwoot_db_prepare
-```
+Ver `.env.example` para la lista completa. Las esenciales:
 
-2. Reinicia solo Chatwoot:
-
-```powershell
-docker compose restart chatwoot_rails chatwoot_sidekiq
-```
-
-3. Comando manual **solo si** el servicio automático falló (misma carpeta del proyecto):
-
-```powershell
-docker compose run --rm chatwoot_rails bundle exec rails db:chatwoot_prepare
-docker compose up -d
-```
+| Variable | Descripción |
+|----------|-------------|
+| `ANTHROPIC_API_KEY` | Clave API para los agentes Claude |
+| `SECRET_KEY` | Clave secreta Django (generar con `python -c "import secrets; print(secrets.token_hex(50))"`) |
+| `DEBUG` | `True` en desarrollo, `False` en producción |
+| `DB_*` | Configuración PostgreSQL |
