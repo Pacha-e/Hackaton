@@ -34,10 +34,11 @@ services:
     volumes:
       - ./frontend/src:/app/src
       - ./frontend/public:/app/public
+      - ./frontend/vite.config.ts:/app/vite.config.ts:ro
     ports:
       - "5175:5173"
     environment:
-      - VITE_API_URL=http://localhost:8090
+      - VITE_API_TARGET=http://web:8000
     depends_on:
       - web
 

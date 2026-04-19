@@ -10,6 +10,26 @@ block content %}
     </ol>
   </nav>
 
+  {% if pqrsd.estado == 'rechazada' %}
+  <div class="alert alert-danger border-danger d-flex gap-3 align-items-start mb-3" role="alert">
+    <i class="bi bi-shield-exclamation fs-4 flex-shrink-0 mt-1"></i>
+    <div class="flex-grow-1">
+      <h6 class="alert-heading mb-1">PQRSD rechazada por filtro automático</h6>
+      {% if pqrsd.observaciones_internas %}
+      <p class="mb-2">{{ pqrsd.observaciones_internas }}</p>
+      {% endif %}
+      <form method="post" action="{% url 'funcionarios:cambiar_estado' pqrsd.pk %}" class="d-inline">
+        {% csrf_token %}
+        <input type="hidden" name="estado" value="radicada">
+        <input type="hidden" name="observaciones" value="Reactivada manualmente por {{ request.user.get_full_name|default:request.user.username }}">
+        <button type="submit" class="btn btn-sm btn-warning fw-semibold">
+          <i class="bi bi-arrow-counterclockwise me-1"></i>Reactivar PQRSD
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
   <div class="row g-4">
     <!-- Columna principal -->
     <div class="col-lg-8">

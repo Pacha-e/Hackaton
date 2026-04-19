@@ -104,9 +104,14 @@ ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY', default='')
 # CORS — allow React dev server
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
-    default='http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173'
+    default='http://localhost:5173,http://localhost:5175,http://localhost:3000,http://127.0.0.1:5173'
 ).split(',')
 CORS_ALLOW_CREDENTIALS = True
+
+CSRF_TRUSTED_ORIGINS = config(
+    'CSRF_TRUSTED_ORIGINS',
+    default='http://localhost:5173,http://localhost:5175,http://localhost:8090,http://127.0.0.1:5173'
+).split(',')
 
 # DRF
 REST_FRAMEWORK = {

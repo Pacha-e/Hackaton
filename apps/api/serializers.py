@@ -158,7 +158,7 @@ class PQRSDDetailSerializer(serializers.ModelSerializer):
             'confianza_clasificacion', 'clasificacion_validada',
             'funcionario_asignado', 'funcionario_nombre',
             'fecha_radicacion', 'fecha_limite', 'fecha_respuesta',
-            'observaciones_funcionario', 'omnicanal_meta',
+            'observaciones_funcionario', 'observaciones_internas', 'omnicanal_meta',
             'clasificacion_ia', 'sintesis',
             'dias_restantes', 'en_alerta', 'vencida',
         ]

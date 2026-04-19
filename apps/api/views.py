@@ -757,8 +757,18 @@ def pqrsd_submit_pipeline(request):
     Canal ciudadano — no requiere autenticación.
     """
     if not getattr(settings, 'ANTHROPIC_API_KEY', ''):
-        # Fallback al submit estándar sin IA
-        return pqrsd_create(request)
+        # Fallback al submit estándar sin IA — call serializer directly
+        serializer = PQRSDCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            pqrsd = serializer.save()
+            return Response({
+                'radicado': pqrsd.radicado,
+                'id': pqrsd.id,
+                'fecha_radicacion': pqrsd.fecha_radicacion,
+                'fecha_limite': pqrsd.fecha_limite,
+                'estado': pqrsd.estado,
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     required = ['descripcion_raw', 'canal']
     for f in required:

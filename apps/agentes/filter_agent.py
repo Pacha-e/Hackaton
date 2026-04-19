@@ -4,7 +4,7 @@ Modelo: claude-haiku-4-5 (decisión binaria, alto volumen)
 """
 import json
 import logging
-from .base import BaseAgent, HAIKU
+from .base import BaseAgent, SONNET
 from .contracts import PipelineContext
 
 logger = logging.getLogger(__name__)
@@ -32,7 +32,7 @@ Para duplicados: usa los radicados previos que se te proporcionan."""
 
 
 class FilterAgent(BaseAgent):
-    model = HAIKU
+    model = SONNET
     name = 'FilterAgent'
 
     def run(self, ctx: PipelineContext) -> PipelineContext:
