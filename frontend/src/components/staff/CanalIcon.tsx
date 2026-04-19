@@ -1,11 +1,11 @@
-import { MessageCircle, Mail, Globe, Instagram, Users } from 'lucide-react'
+import { MessageCircle, Mail, Globe, Hash, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
 const config: Record<string, { icon: typeof Globe; color: string; bg: string; label: string }> = {
-  whatsapp: { icon: MessageCircle, color: 'text-green-600', bg: 'bg-green-100', label: 'WhatsApp' },
-  email: { icon: Mail, color: 'text-purple-600', bg: 'bg-purple-100', label: 'Email' },
-  web: { icon: Globe, color: 'text-blue-600', bg: 'bg-blue-100', label: 'Web' },
-  instagram: { icon: Instagram, color: 'text-pink-600', bg: 'bg-pink-100', label: 'Instagram' },
+  whatsapp: { icon: MessageCircle, color: 'text-emerald-600', bg: 'bg-emerald-100', label: 'WhatsApp' },
+  email: { icon: Mail, color: 'text-gray-600', bg: 'bg-gray-100', label: 'Email' },
+  web: { icon: Globe, color: 'text-blue-600', bg: 'bg-blue-100', label: 'Portal Web' },
+  instagram: { icon: Hash, color: 'text-pink-600', bg: 'bg-pink-100', label: 'Instagram' },
   presencial: { icon: Users, color: 'text-orange-600', bg: 'bg-orange-100', label: 'Presencial' },
 }
 

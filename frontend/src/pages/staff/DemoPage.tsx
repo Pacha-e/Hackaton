@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { CanalIcon } from '@/components/staff/CanalIcon'
 import {
   Zap, CheckCircle, ArrowRight, Play, Info, MessageCircle,
-  Mail, Globe, Instagram, Users, RefreshCw
+  Mail, Globe, Hash, Users, RefreshCw
 } from 'lucide-react'
 
 interface DemoScenario {
@@ -47,7 +47,7 @@ const scenarios: DemoScenario[] = [
     canal: 'instagram',
     scenario: 'instagram',
     label: 'Instagram / Redes',
-    icon: Instagram,
+    icon: Hash,
     description: 'Simula una queja ciudadana publicada en redes sociales sobre alumbrado público.',
     preview: '"@AlcaldíaMedellín hace 2 semanas que se dañó el alumbrado en toda la Cra 45..."',
     iconBg: 'bg-pink-100',
