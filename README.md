@@ -61,6 +61,7 @@ Construir un sistema mínimo viable (MVP) que permita:
 
 ## Arquitectura del sistema
 
+```
 pqrds-medellin/
 ├── apps/
 │   ├── agentes/
@@ -78,6 +79,7 @@ pqrds-medellin/
 ├── Makefile
 ├── requirements.txt
 └── README.md
+```
 
 ---
 
