@@ -38,7 +38,4 @@ urlpatterns = [
 
     # Medata sync
     path('sync-medata/', views.sync_medata),
-
-    # Chatwoot → PQRSD (webhook)
-    path('integrations/chatwoot/', views.chatwoot_webhook),
 ]

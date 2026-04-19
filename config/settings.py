@@ -98,13 +98,6 @@ LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'funcionarios:dashboard'
 LOGOUT_REDIRECT_URL = 'login'
 
-GEMINI_API_KEY = config('GEMINI_API_KEY', default='')
-
-# Webhook Chatwoot → Django (opcional; si está vacío no se valida token — solo para desarrollo)
-CHATWOOT_WEBHOOK_SECRET = config('CHATWOOT_WEBHOOK_SECRET', default='')
-# Tras radicar desde Chatwoot, ejecutar Gemini (mismo flujo que POST .../classify/)
-CHATWOOT_AUTO_CLASIFICAR = config('CHATWOOT_AUTO_CLASIFICAR', default=True, cast=bool)
-
 # CORS — allow React dev server
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
@@ -125,14 +118,3 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
     ],
 }
-
-# ========================================
-# LangSmith — Observabilidad de Agentes
-# LangChain lee estas variables del entorno de sistema operativo (os.environ)
-# Las inyectamos aquí para que Docker las cargue desde .env
-# ========================================
-import os
-os.environ.setdefault('LANGCHAIN_TRACING_V2', config('LANGCHAIN_TRACING_V2', default='false'))
-os.environ.setdefault('LANGCHAIN_ENDPOINT', config('LANGCHAIN_ENDPOINT', default='https://api.smith.langchain.com'))
-os.environ.setdefault('LANGCHAIN_API_KEY', config('LANGCHAIN_API_KEY', default=''))
-os.environ.setdefault('LANGCHAIN_PROJECT', config('LANGCHAIN_PROJECT', default='OmegaHack2026-PQRSD'))
