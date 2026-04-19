@@ -33,6 +33,7 @@ urlpatterns = [
 
     # Dashboard
     path('stats/', views.stats),
+    path('stats/mapa-calor/', views.stats_mapa_calor),
 
     # Inbox
     path('inbox/', views.inbox),

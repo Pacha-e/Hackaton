@@ -17,6 +17,7 @@ import PqrsdListPage from '@/pages/staff/PqrsdListPage'
 import PqrsdDetailPage from '@/pages/staff/PqrsdDetailPage'
 import MetricasPage from '@/pages/staff/MetricasPage'
 import DemoPage from '@/pages/staff/DemoPage'
+import MapaCalorPage from '@/pages/staff/MapaCalorPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -62,6 +63,9 @@ function AppRoutes() {
       } />
       <Route path="/staff/demo" element={
         <ProtectedRoute><DemoPage /></ProtectedRoute>
+      } />
+      <Route path="/staff/mapa" element={
+        <ProtectedRoute><MapaCalorPage /></ProtectedRoute>
       } />
 
       {/* Fallbacks */}

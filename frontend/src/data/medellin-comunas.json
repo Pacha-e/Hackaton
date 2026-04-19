@@ -1,0 +1,197 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": { "codigo": 1, "nombre": "Popular", "aliases": ["Popular"] },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-75.558, 6.308], [-75.540, 6.303], [-75.526, 6.310],
+          [-75.524, 6.330], [-75.534, 6.340], [-75.553, 6.338],
+          [-75.561, 6.326], [-75.558, 6.308]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "codigo": 2, "nombre": "Santa Cruz", "aliases": ["Santa Cruz"] },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-75.560, 6.280], [-75.536, 6.278], [-75.524, 6.283],
+          [-75.524, 6.308], [-75.540, 6.308], [-75.558, 6.308],
+          [-75.562, 6.296], [-75.560, 6.280]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "codigo": 3, "nombre": "Manrique", "aliases": ["Manrique", "San Isidro"] },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-75.547, 6.262], [-75.522, 6.260], [-75.515, 6.268],
+          [-75.516, 6.288], [-75.524, 6.295], [-75.540, 6.295],
+          [-75.550, 6.285], [-75.547, 6.262]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "codigo": 4, "nombre": "Aranjuez", "aliases": ["Aranjuez"] },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-75.582, 6.270], [-75.558, 6.268], [-75.544, 6.272],
+          [-75.542, 6.288], [-75.548, 6.298], [-75.562, 6.300],
+          [-75.576, 6.296], [-75.582, 6.282], [-75.582, 6.270]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "codigo": 5, "nombre": "Castilla", "aliases": ["Castilla"] },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-75.616, 6.276], [-75.590, 6.274], [-75.580, 6.278],
+          [-75.580, 6.296], [-75.586, 6.308], [-75.600, 6.310],
+          [-75.614, 6.304], [-75.618, 6.290], [-75.616, 6.276]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "codigo": 6, "nombre": "Doce de Octubre", "aliases": ["Doce de Octubre", "12 de Octubre"] },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-75.618, 6.260], [-75.590, 6.258], [-75.580, 6.262],
+          [-75.580, 6.278], [-75.590, 6.278], [-75.616, 6.278],
+          [-75.620, 6.272], [-75.618, 6.260]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "codigo": 7, "nombre": "Robledo", "aliases": ["Robledo"] },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-75.650, 6.252], [-75.622, 6.248], [-75.614, 6.256],
+          [-75.612, 6.278], [-75.618, 6.290], [-75.632, 6.292],
+          [-75.646, 6.280], [-75.652, 6.265], [-75.650, 6.252]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "codigo": 8, "nombre": "Villa Hermosa", "aliases": ["Villa Hermosa"] },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-75.548, 6.245], [-75.522, 6.242], [-75.514, 6.250],
+          [-75.515, 6.268], [-75.522, 6.273], [-75.540, 6.273],
+          [-75.550, 6.265], [-75.548, 6.245]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "codigo": 9, "nombre": "Buenos Aires", "aliases": ["Buenos Aires"] },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-75.550, 6.222], [-75.524, 6.220], [-75.515, 6.228],
+          [-75.514, 6.245], [-75.522, 6.248], [-75.548, 6.248],
+          [-75.552, 6.238], [-75.550, 6.222]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "codigo": 10, "nombre": "La Candelaria", "aliases": ["La Candelaria", "Centro", "El Centro", "Candelaria"] },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-75.578, 6.235], [-75.552, 6.233], [-75.542, 6.238],
+          [-75.540, 6.252], [-75.546, 6.262], [-75.558, 6.265],
+          [-75.572, 6.262], [-75.580, 6.252], [-75.578, 6.235]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "codigo": 11, "nombre": "Laureles - Estadio", "aliases": ["Laureles - Estadio", "Laureles", "Laureles-Estadio", "Estadio", "Laureles Estadio"] },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-75.612, 6.240], [-75.582, 6.238], [-75.572, 6.242],
+          [-75.570, 6.256], [-75.576, 6.265], [-75.590, 6.268],
+          [-75.604, 6.262], [-75.614, 6.252], [-75.612, 6.240]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "codigo": 12, "nombre": "La América", "aliases": ["La América", "La America", "America"] },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-75.626, 6.225], [-75.600, 6.222], [-75.590, 6.228],
+          [-75.588, 6.242], [-75.594, 6.250], [-75.610, 6.252],
+          [-75.622, 6.244], [-75.628, 6.234], [-75.626, 6.225]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "codigo": 13, "nombre": "San Javier", "aliases": ["San Javier", "La 13"] },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-75.648, 6.215], [-75.622, 6.212], [-75.614, 6.218],
+          [-75.612, 6.238], [-75.618, 6.246], [-75.634, 6.248],
+          [-75.648, 6.238], [-75.652, 6.224], [-75.648, 6.215]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "codigo": 14, "nombre": "El Poblado", "aliases": ["El Poblado", "Poblado", "Manila"] },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-75.568, 6.192], [-75.538, 6.188], [-75.525, 6.196],
+          [-75.522, 6.215], [-75.530, 6.228], [-75.548, 6.232],
+          [-75.566, 6.222], [-75.572, 6.206], [-75.568, 6.192]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "codigo": 15, "nombre": "Guayabal", "aliases": ["Guayabal"] },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-75.600, 6.196], [-75.572, 6.193], [-75.562, 6.200],
+          [-75.560, 6.218], [-75.566, 6.228], [-75.582, 6.230],
+          [-75.598, 6.222], [-75.604, 6.210], [-75.600, 6.196]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": { "codigo": 16, "nombre": "Belén", "aliases": ["Belén", "Belen"] },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-75.632, 6.200], [-75.602, 6.196], [-75.594, 6.202],
+          [-75.592, 6.222], [-75.598, 6.234], [-75.614, 6.238],
+          [-75.628, 6.228], [-75.636, 6.214], [-75.632, 6.200]
+        ]]
+      }
+    }
+  ]
+}

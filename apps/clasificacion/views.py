@@ -6,7 +6,8 @@ from django.utils import timezone
 from apps.pqrsd.models import PQRSD
 from apps.conocimiento.models import Dependencia
 from .models import ClasificacionIA
-from .gemini_service import clasificar_pqrsd
+from apps.sintesis.models import SintesisPQRSD
+from .langgraph_agent import procesar_pqrsd_con_agente
 
 
 @login_required
@@ -16,34 +17,48 @@ def clasificar(request, pqrsd_id):
     if hasattr(pqrsd, 'clasificacion_ia'):
         clasificacion = pqrsd.clasificacion_ia
     else:
-        resultado = clasificar_pqrsd(pqrsd)
+        # 1. Ejecutamos nuestra red de LangGraph Agent
+        estado_final = procesar_pqrsd_con_agente(pqrsd)
+        
+        # 2. Extraemos el bloque de la clasificación
+        clasif_data = estado_final.get('clasificacion', {})
         dep_sugerida = None
-        if resultado and resultado.get('dependencia_id'):
+        if clasif_data and clasif_data.get('dependencia_id'):
             try:
-                dep_sugerida = Dependencia.objects.get(pk=resultado['dependencia_id'])
+                dep_sugerida = Dependencia.objects.get(pk=clasif_data['dependencia_id'])
             except Dependencia.DoesNotExist:
                 pass
 
+        # 3. Guardamos la Clasificación
         clasificacion = ClasificacionIA.objects.create(
             pqrsd=pqrsd,
-            prompt_enviado=resultado.get('prompt', ''),
-            respuesta_cruda=resultado.get('respuesta_cruda', ''),
-            tipo_sugerido=resultado.get('tipo_sugerido', ''),
-            prioridad_sugerida=resultado.get('prioridad_sugerida', 'media'),
-            razon_clasificacion=resultado.get('razon', ''),
-            confianza=resultado.get('confianza'),
-            modelo_usado=resultado.get('modelo', 'gemini-1.5-flash'),
-            dependencias_sugeridas=[{
-                'id': resultado.get('dependencia_id'),
-                'nombre': resultado.get('dependencia_nombre'),
-                'confianza': resultado.get('confianza'),
-                'razon': resultado.get('razon'),
-            }],
+            prompt_enviado="Orquestado via LangGraph (ver LangSmith para detalles)",
+            respuesta_cruda="JSON estructurado",
+            tipo_sugerido=clasif_data.get('tipo_sugerido', ''),
+            prioridad_sugerida=clasif_data.get('prioridad_sugerida', 'media'),
+            razon_clasificacion=clasif_data.get('razon', ''),
+            confianza=clasif_data.get('confianza', 0),
+            modelo_usado='langgraph-gemini-agent-flash',
+            dependencias_sugeridas=[clasif_data] if clasif_data else [],
         )
+        
         pqrsd.dependencia_sugerida = dep_sugerida
-        pqrsd.confianza_clasificacion = resultado.get('confianza')
+        pqrsd.confianza_clasificacion = clasif_data.get('confianza', 0)
         pqrsd.estado = 'en_clasificacion'
         pqrsd.save()
+        
+        # 4. Guardamos también la Síntesis de paso (porque el agente ya la hizo gratis en el segundo nodo)
+        sintesis_data = estado_final.get('sintesis', {})
+        if sintesis_data and not hasattr(pqrsd, 'sintesis'):
+            SintesisPQRSD.objects.create(
+                pqrsd=pqrsd,
+                resumen_ejecutivo=sintesis_data.get('resumen_ejecutivo', ''),
+                problema_central=sintesis_data.get('problema_central', ''),
+                accion_requerida=sintesis_data.get('accion_requerida', ''),
+                datos_contextuales=sintesis_data.get('datos_contextuales', {}),
+                entidades_mencionadas=sintesis_data.get('entidades_mencionadas', []),
+                normativa_aplicable=sintesis_data.get('normativa_aplicable', ''),
+            )
 
     dependencias = Dependencia.objects.filter(activa=True)
     return render(request, 'clasificacion/revisar.html', {

@@ -444,6 +444,40 @@ def stats(request):
 
 
 # ---------------------------------------------------------------------------
+# STAFF — MAPA DE CALOR
+# ---------------------------------------------------------------------------
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def stats_mapa_calor(request):
+    """PQRSD count aggregated by commune and barrio for the heatmap."""
+    por_comuna = {}
+    for row in PQRSD.objects.exclude(comuna='').values('comuna').annotate(n=Count('id')):
+        nombre = row['comuna'].strip()
+        if nombre:
+            por_comuna[nombre] = por_comuna.get(nombre, 0) + row['n']
+
+    por_barrio = {}
+    for row in PQRSD.objects.exclude(barrio='').values('barrio', 'comuna').annotate(n=Count('id')):
+        nombre = row['barrio'].strip()
+        if nombre:
+            entry = por_barrio.setdefault(nombre, {'count': 0, 'comuna': row['comuna'].strip()})
+            entry['count'] += row['n']
+
+    return Response({
+        'por_comuna': [
+            {'nombre': k, 'count': v}
+            for k, v in sorted(por_comuna.items(), key=lambda x: -x[1])
+        ],
+        'por_barrio': [
+            {'nombre': k, 'count': v['count'], 'comuna': v['comuna']}
+            for k, v in sorted(por_barrio.items(), key=lambda x: -x[1]['count'])
+        ],
+        'total': PQRSD.objects.count(),
+    })
+
+
+# ---------------------------------------------------------------------------
 # STAFF — INBOX (multichannel view)
 # ---------------------------------------------------------------------------
 

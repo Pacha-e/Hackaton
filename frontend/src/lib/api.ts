@@ -59,6 +59,7 @@ export const staffApi = {
   getSynthesis: (id: number) => api.get(`/pqrsd/${id}/synthesis/`),
   generateSynthesis: (id: number) => api.post(`/pqrsd/${id}/synthesis/`),
   getStats: () => api.get('/stats/'),
+  getMapaCalor: () => api.get('/stats/mapa-calor/'),
   getInbox: (params?: Record<string, string>) => api.get('/inbox/', { params }),
   demoInject: (canal: string, scenario?: string) =>
     api.post('/demo/inject/', { canal, scenario }),

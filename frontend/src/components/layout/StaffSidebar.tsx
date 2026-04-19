@@ -2,7 +2,7 @@ import { Link, useLocation } from 'react-router-dom'
 import {
   LayoutDashboard, Inbox, FileText, BarChart2,
   LogOut, ChevronRight, AlertTriangle, CheckSquare,
-  BookOpen, Zap
+  BookOpen, Zap, Flame
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { useAuth } from '@/hooks/useAuth'
@@ -12,6 +12,7 @@ const navItems = [
   { href: '/staff/inbox', label: 'Bandeja de Entrada', icon: Inbox },
   { href: '/staff/pqrsd', label: 'Todos los PQRSD', icon: FileText },
   { href: '/staff/metricas', label: 'Métricas', icon: BarChart2 },
+  { href: '/staff/mapa', label: 'Mapa de Calor', icon: Flame },
   { href: '/staff/demo', label: 'Demo Multicanal', icon: Zap },
 ]
 
