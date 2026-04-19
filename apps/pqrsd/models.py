@@ -96,6 +96,9 @@ class PQRSD(models.Model):
 
     observaciones_funcionario = models.TextField(blank=True)
 
+    # Trazabilidad omnicanal (Chatwoot, etc.) — no sustituye radicado oficial
+    omnicanal_meta = models.JSONField(default=dict, blank=True)
+
     class Meta:
         ordering = ['-fecha_radicacion']
         verbose_name = 'PQRSD'

@@ -21,6 +21,7 @@ from rest_framework.response import Response
 from apps.pqrsd.models import PQRSD
 from apps.conocimiento.models import Dependencia, PrecedenteRespuesta
 from apps.clasificacion.models import ClasificacionIA
+from apps.clasificacion.services import clasificar_y_persistir
 from apps.sintesis.models import SintesisPQRSD
 
 from .serializers import (
@@ -31,6 +32,40 @@ from .serializers import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# API root (evita 404 en GET /api/v1/)
+# ---------------------------------------------------------------------------
+
+@api_view(['GET', 'HEAD'])
+@permission_classes([AllowAny])
+def api_root(request):
+    """Índice mínimo de la API para comprobaciones y desarrollo."""
+    rel = request.path
+    if not rel.endswith('/'):
+        rel = rel + '/'
+    routes = {
+        'auth_csrf': 'auth/csrf/',
+        'auth_login': 'auth/login/',
+        'auth_logout': 'auth/logout/',
+        'auth_me': 'auth/me/',
+        'pqrsd_submit': 'pqrsd/submit/',
+        'pqrsd_status': 'pqrsd/status/<radicado>/',
+        'dependencias': 'dependencias/',
+        'choices': 'choices/',
+        'pqrsd_list': 'pqrsd/',
+        'pqrsd_detail': 'pqrsd/<id>/',
+        'stats': 'stats/',
+        'inbox': 'inbox/',
+        'integrations_chatwoot': 'integrations/chatwoot/',
+    }
+    return Response({
+        'service': 'PQRSD Medellín API',
+        'version': 1,
+        'prefix': rel,
+        'routes': routes,
+    })
 
 
 # ---------------------------------------------------------------------------
@@ -245,41 +280,16 @@ def pqrsd_classify(request, pk):
     except PQRSD.DoesNotExist:
         return Response({'error': 'No encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
-    # Check if already classified
-    if hasattr(pqrsd, 'clasificacion_ia') and pqrsd.clasificacion_ia.aceptada is not None:
-        serializer = ClasificacionIASerializer(pqrsd.clasificacion_ia)
-        return Response({'already_classified': True, 'clasificacion': serializer.data})
+    try:
+        c = pqrsd.clasificacion_ia
+        if c.aceptada is not None:
+            serializer = ClasificacionIASerializer(c)
+            return Response({'already_classified': True, 'clasificacion': serializer.data})
+    except ClasificacionIA.DoesNotExist:
+        pass
 
     try:
-        from apps.clasificacion.gemini_service import clasificar_pqrsd
-        resultado = clasificar_pqrsd(pqrsd)
-
-        dep = None
-        if resultado.get('dependencia_id'):
-            try:
-                dep = Dependencia.objects.get(pk=resultado['dependencia_id'])
-            except Dependencia.DoesNotExist:
-                pass
-
-        # Create or update ClasificacionIA
-        clasificacion, _ = ClasificacionIA.objects.get_or_create(pqrsd=pqrsd)
-        clasificacion.prompt_enviado = resultado.get('prompt', '')
-        clasificacion.respuesta_cruda = resultado.get('respuesta_cruda', '')
-        clasificacion.tipo_sugerido = resultado.get('tipo_sugerido', pqrsd.tipo)
-        clasificacion.prioridad_sugerida = resultado.get('prioridad_sugerida', 'media')
-        clasificacion.razon_clasificacion = resultado.get('razon', '')
-        clasificacion.confianza = resultado.get('confianza', 0)
-        clasificacion.modelo_usado = resultado.get('modelo', 'simulado')
-        clasificacion.dependencias_sugeridas = [resultado.get('dependencia_id')]
-        clasificacion.save()
-
-        if dep:
-            pqrsd.dependencia_sugerida = dep
-        pqrsd.confianza_clasificacion = resultado.get('confianza', 0)
-        if pqrsd.estado == 'radicada':
-            pqrsd.estado = 'en_clasificacion'
-        pqrsd.save()
-
+        clasificacion, resultado, dep = clasificar_y_persistir(pqrsd)
         serializer = ClasificacionIASerializer(clasificacion)
         dep_data = DependenciaSerializer(dep).data if dep else None
         return Response({
@@ -629,24 +639,80 @@ def choices(request):
 
 
 # ---------------------------------------------------------------------------
-# INTEGRACIÓN CHATWOOT (webhook → radicación PQRSD)
+# INTEGRACIÓN CHATWOOT (webhook → radicación PQRSD + agente Gemini)
 # ---------------------------------------------------------------------------
+
+def _chatwoot_es_mensaje_entrante(message: dict) -> bool:
+    """Solo mensajes del ciudadano; ignora agente, plantillas y actividades."""
+    if not message:
+        return False
+    if 'message_type' not in message:
+        # Payload mínimo de prueba sin tipo → tratar como entrante
+        return True
+    mt = message.get('message_type')
+    if mt in (1, '1', 'outgoing'):
+        return False
+    if mt in (2, '2', 'activity'):
+        return False
+    if mt in (3, '3', 'template'):
+        return False
+    if mt in (0, '0', 'incoming'):
+        return True
+    s = str(mt).lower()
+    if s == 'incoming':
+        return True
+    return False
+
+
+def _chatwoot_payload_desde_evento(data: dict):
+    """Normaliza payload webhook (varía según versión de Chatwoot)."""
+    message = data.get('message') or {}
+    if not message and data.get('content') is not None:
+        message = data
+    conversation = data.get('conversation') or {}
+    meta = conversation.get('meta') or {}
+    sender = meta.get('sender') or message.get('sender') or {}
+    content = (message.get('content') or '').strip()
+    name = (sender.get('name') or sender.get('identifier') or 'Ciudadano (Chatwoot)')[:200]
+    email = (sender.get('email') or '')[:254]
+    phone = (sender.get('phone_number') or sender.get('phone') or '')[:20]
+    msg_id = str(message.get('id') or '')
+    conv_id = str(conversation.get('id') or data.get('conversation_id') or '')
+    return message, conversation, content, name, email, phone, msg_id, conv_id
+
 
 @api_view(['POST'])
 @authentication_classes([])
 @permission_classes([AllowAny])
 def chatwoot_webhook(request):
     """
-    Recibe eventos de Chatwoot (p. ej. message_created) o un cuerpo mínimo de prueba.
-    Configura en Chatwoot: Automation → Webhook URL → http://host.docker.internal:8090/api/v1/integrations/chatwoot/
-    Cabecera opcional: X-Webhook-Token (mismo valor que CHATWOOT_WEBHOOK_SECRET en .env).
+    Webhook Chatwoot → crea PQRSD y ejecuta el mismo agente (Gemini) que /pqrsd/<id>/classify/.
+
+    En Chatwoot: Settings → Integrations → Webhooks → URL:
+    http://host.docker.internal:8090/api/v1/integrations/chatwoot/
+    Eventos: al menos **message_created**.
+
+    Cabecera opcional: X-Webhook-Token = CHATWOOT_WEBHOOK_SECRET (.env Django).
     """
     secret = getattr(settings, 'CHATWOOT_WEBHOOK_SECRET', '') or ''
     if secret and request.headers.get('X-Webhook-Token', '') != secret:
         return Response({'error': 'No autorizado'}, status=status.HTTP_401_UNAUTHORIZED)
 
+    auto_cls = getattr(settings, 'CHATWOOT_AUTO_CLASIFICAR', True)
     data = request.data if isinstance(request.data, dict) else {}
 
+    def _responder_tras_crear(pqrsd, source: str, extra=None):
+        out = {
+            'ok': True,
+            'radicado': pqrsd.radicado,
+            'id': pqrsd.id,
+            'source': source,
+        }
+        if extra:
+            out.update(extra)
+        return Response(out, status=status.HTTP_201_CREATED)
+
+    # Cuerpo directo (pruebas Postman / integración custom)
     if data.get('asunto') and data.get('descripcion'):
         payload = {
             'tipo': data.get('tipo', 'peticion'),
@@ -662,49 +728,80 @@ def chatwoot_webhook(request):
             'descripcion': data['descripcion'],
         }
         ser = PQRSDCreateSerializer(data=payload)
-        if ser.is_valid():
-            pqrsd = ser.save()
-            return Response({
-                'ok': True,
-                'radicado': pqrsd.radicado,
-                'id': pqrsd.id,
-                'source': 'direct',
-            }, status=status.HTTP_201_CREATED)
-        return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+        if not ser.is_valid():
+            return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+        pqrsd = ser.save()
+        meta = data.get('omnicanal_meta')
+        if isinstance(meta, dict):
+            pqrsd.omnicanal_meta = meta
+            pqrsd.save(update_fields=['omnicanal_meta'])
+        extra = {}
+        if auto_cls:
+            try:
+                clasificacion, _, dep = clasificar_y_persistir(pqrsd)
+                extra['clasificacion'] = ClasificacionIASerializer(clasificacion).data
+                extra['dependencia_sugerida'] = DependenciaSerializer(dep).data if dep else None
+                extra['agente'] = 'gemini'
+            except Exception as e:
+                logger.exception('Chatwoot direct: clasificación: %s', e)
+                extra['clasificacion_error'] = str(e)
+        return _responder_tras_crear(pqrsd, 'direct', extra)
 
     event = data.get('event') or data.get('event_type')
-    message = data.get('message') or {}
-    content = (message.get('content') or '').strip()
-    conversation = data.get('conversation') or {}
-    meta = conversation.get('meta') or {}
-    sender = meta.get('sender') or message.get('sender') or {}
-    name = (sender.get('name') or sender.get('identifier') or 'Ciudadano (Chatwoot)')[:200]
+    message, conversation, content, name, email, phone, msg_id, conv_id = _chatwoot_payload_desde_evento(data)
 
-    if event in ('message_created', 'message_updated') or message:
-        if not content and event:
-            return Response({'ok': True, 'ignored': True, 'reason': 'sin contenido'}, status=status.HTTP_200_OK)
-        asunto = content[:300] if content else 'Mensaje desde Chatwoot'
-        desc = content if content else '(sin texto)'
-        payload = {
-            'tipo': 'peticion',
-            'canal_entrada': 'whatsapp',
-            'anonimo': False,
-            'nombre_ciudadano': name,
-            'asunto': asunto,
-            'descripcion': desc,
-        }
-        ser = PQRSDCreateSerializer(data=payload)
-        if ser.is_valid():
-            pqrsd = ser.save()
-            return Response({
-                'ok': True,
-                'radicado': pqrsd.radicado,
-                'id': pqrsd.id,
-                'source': 'chatwoot',
-            }, status=status.HTTP_201_CREATED)
+    if msg_id and PQRSD.objects.filter(omnicanal_meta__chatwoot_message_id=msg_id).exists():
+        return Response({'ok': True, 'duplicate': True, 'chatwoot_message_id': msg_id}, status=status.HTTP_200_OK)
+
+    if event == 'message_updated':
+        return Response({'ok': True, 'ignored': True, 'reason': 'message_updated'}, status=status.HTTP_200_OK)
+
+    if event and event != 'message_created':
+        return Response({'ok': True, 'ignored': True, 'event': event}, status=status.HTTP_200_OK)
+
+    msg_for_type = message if message else data
+    if not content:
+        return Response({
+            'ok': True,
+            'hint': 'Configura webhook con evento message_created. Prueba manual: asunto + descripcion.',
+        }, status=status.HTTP_200_OK)
+
+    if not _chatwoot_es_mensaje_entrante(msg_for_type if isinstance(msg_for_type, dict) else {}):
+        return Response({'ok': True, 'ignored': True, 'reason': 'no es mensaje entrante'}, status=status.HTTP_200_OK)
+
+    asunto = content[:300]
+    desc = content
+    omnicanal_meta = {
+        'origen': 'chatwoot',
+        'chatwoot_message_id': msg_id,
+        'chatwoot_conversation_id': conv_id,
+        'event': event or 'message_created',
+    }
+    payload = {
+        'tipo': 'peticion',
+        'canal_entrada': 'whatsapp',
+        'anonimo': False,
+        'nombre_ciudadano': name,
+        'email_ciudadano': email,
+        'telefono_ciudadano': phone,
+        'asunto': asunto,
+        'descripcion': desc,
+    }
+    ser = PQRSDCreateSerializer(data=payload)
+    if not ser.is_valid():
         return Response(ser.errors, status=status.HTTP_400_BAD_REQUEST)
+    pqrsd = ser.save()
+    pqrsd.omnicanal_meta = omnicanal_meta
+    pqrsd.save(update_fields=['omnicanal_meta'])
 
-    return Response({
-        'ok': True,
-        'hint': 'Envía JSON con asunto+descripcion, o un payload message_created de Chatwoot.',
-    }, status=status.HTTP_200_OK)
+    extra = {'omnicanal': omnicanal_meta}
+    if auto_cls:
+        try:
+            clasificacion, _, dep = clasificar_y_persistir(pqrsd)
+            extra['clasificacion'] = ClasificacionIASerializer(clasificacion).data
+            extra['dependencia_sugerida'] = DependenciaSerializer(dep).data if dep else None
+            extra['agente'] = 'gemini'
+        except Exception as e:
+            logger.exception('Chatwoot webhook: clasificación: %s', e)
+            extra['clasificacion_error'] = str(e)
+    return _responder_tras_crear(pqrsd, 'chatwoot', extra)

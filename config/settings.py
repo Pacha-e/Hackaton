@@ -102,6 +102,8 @@ GEMINI_API_KEY = config('GEMINI_API_KEY', default='')
 
 # Webhook Chatwoot → Django (opcional; si está vacío no se valida token — solo para desarrollo)
 CHATWOOT_WEBHOOK_SECRET = config('CHATWOOT_WEBHOOK_SECRET', default='')
+# Tras radicar desde Chatwoot, ejecutar Gemini (mismo flujo que POST .../classify/)
+CHATWOOT_AUTO_CLASIFICAR = config('CHATWOOT_AUTO_CLASIFICAR', default=True, cast=bool)
 
 # CORS — allow React dev server
 CORS_ALLOWED_ORIGINS = config(
