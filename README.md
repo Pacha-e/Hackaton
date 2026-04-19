@@ -1,131 +1,177 @@
-# PQRSD Medellín — OmegaHack 2026 (Grupo NOVA / EAFIT)
+# PQRSD Medellín Inteligente
 
-Sistema inteligente de gestión de PQRSD para la Secretaría de Desarrollo Económico de Medellín.  
-Pipeline de 9 agentes Claude (Haiku · Sonnet · Opus) que procesa peticiones ciudadanas end-to-end.
+> MVP desarrollado para **OmegaHack 2026** por el equipo **Incapaces FC**.  
+> Plataforma para la gestión inteligente de **PQRSD** de la Alcaldía de Medellín, con enfoque en automatización, clasificación asistida por IA y trazabilidad del proceso.
 
-## Stack
+---
 
-| Capa | Tecnología |
-|------|-----------|
-| Backend | Django 4.2 + Django REST Framework 3.15 |
-| Base de datos | PostgreSQL 15 |
-| Frontend | React 19 + TypeScript + Vite + Tailwind CSS 4 |
-| IA | Anthropic Claude (Haiku / Sonnet / Opus) |
-| Infra | Docker Compose |
+## Descripción general
+
+Este proyecto busca modernizar la recepción, clasificación y seguimiento de **peticiones, quejas, reclamos, sugerencias y denuncias (PQRSD)** mediante una solución web compuesta por:
+
+- **Backend en Django + Django REST Framework**
+- **Frontend en React + TypeScript + Vite**
+- **Base de datos PostgreSQL**
+- **Orquestación con Docker Compose**
+- **Módulos de IA** para clasificación, síntesis, enrutamiento y apoyo a la respuesta
+
+La solución está diseñada para atender tanto el flujo ciudadano como el flujo interno de funcionarios, centralizando la información y mejorando los tiempos de respuesta.
+
+---
+
+## Objetivo del proyecto
+
+Construir un sistema mínimo viable (MVP) que permita:
+
+- Radicar PQRSD desde un portal ciudadano.
+- Consultar el estado de una solicitud.
+- Gestionar casos desde un panel interno para funcionarios.
+- Clasificar solicitudes con apoyo de inteligencia artificial.
+- Sugerir rutas de atención y dependencias responsables.
+- Brindar una experiencia más clara, rápida y trazable.
+
+---
+
+## Características principales
+
+### Portal ciudadano
+- Radicación de solicitudes.
+- Consulta por número de radicado.
+- Confirmación de envío.
+- Interfaz simple y accesible.
+
+### Panel de funcionarios
+- Autenticación para personal autorizado.
+- Dashboard con métricas generales.
+- Bandeja de entrada de solicitudes.
+- Vista detallada de casos.
+- Visualización operativa (mapa de calor).
+- Clasificación y priorización de PQRSD.
+
+### Módulos inteligentes
+- Normalización de solicitudes.
+- Filtrado inicial.
+- Cálculo de SLA.
+- Enrutamiento por dependencia.
+- Validaciones de privacidad.
+- Recuperación de conocimiento de casos previos.
+- Generación de síntesis y apoyo a respuestas.
+
+---
+
+## Arquitectura del sistema
+
+pqrds-medellin/
+├── apps/
+│   ├── agentes/
+│   ├── api/
+│   ├── clasificacion/
+│   ├── conocimiento/
+│   ├── funcionarios/
+│   ├── pqrsd/
+│   └── sintesis/
+├── config/
+├── templates/
+├── frontend/
+├── docker-compose.yml
+├── Dockerfile
+├── Makefile
+├── requirements.txt
+└── README.md
+
+---
+
+## Stack tecnológico
+
+- React 19, TypeScript, Vite, Tailwind CSS  
+- Django 4.2, Django REST Framework  
+- PostgreSQL 15  
+- Docker Compose  
+- IA para clasificación y asistencia  
+
+---
 
 ## Requisitos
 
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (incluye Docker Compose)
-- [Make](https://gnuwin32.sourceforge.net/packages/make.htm) (Windows: instalar via `winget install GnuWin32.Make`)
-- Clave de API de Anthropic → [console.anthropic.com](https://console.anthropic.com)
+- Docker Desktop  
+- Docker Compose  
+- Make  
+- Node.js (opcional)  
+- Python 3.11+ (opcional)  
 
-## Setup en un comando
+---
 
-```bash
-cp .env.example .env      # copia la configuración base
-# edita .env y pon tu ANTHROPIC_API_KEY
-make setup                # build + migraciones + datos demo
-```
-
-Eso es todo. En 2–3 minutos el sistema estará levantado.
-
-## URLs
-
-| Servicio | URL | Descripción |
-|----------|-----|-------------|
-| Portal ciudadano | http://localhost:5175/pqrsd/ | Radicar y consultar PQRSD |
-| Dashboard staff | http://localhost:5175/funcionarios/ | Gestión y clasificación |
-| API REST | http://localhost:5175/api/v1/ | Todos los endpoints |
-| SPA React | http://localhost:5175/ | Interfaz staff moderna |
-
-## Usuarios demo
-
-| Usuario | Contraseña | Rol |
-|---------|-----------|-----|
-| `admin` | `admin1234` | Superusuario |
-| `enlace1` | `pqrsd2026` | Enlace PQRSD |
-| `juridico1` | `pqrsd2026` | Asesor Jurídico |
-
-## Comandos Make
+## Ejecución rápida
 
 ```bash
-make help        # ver todos los comandos disponibles
-
-# Ciclo de vida
-make run         # levantar servicios
-make stop        # detener servicios
-make restart     # reiniciar servicios
-make logs        # ver logs en tiempo real
-make build       # reconstruir imágenes
-
-# Desarrollo
-make shell       # Django shell (manage.py shell)
-make bash        # bash dentro del contenedor web
-make test        # correr tests
-
-# Base de datos
-make migrate     # makemigrations + migrate
-make seed        # cargar datos demo (idempotente)
-make reset       # flush + migrate + seed
-make clean       # eliminar contenedores y volúmenes
+git clone <URL_DEL_REPOSITORIO>
+cd <NOMBRE_DEL_PROYECTO>
+cp .env.example .env
+make setup
 ```
 
-## Pipeline de agentes IA
+O:
 
-Cada PQRSD que entra pasa por 9 agentes en secuencia:
-
-```
-M1 IntakeAgent   (Haiku)  → Normalización multi-canal
-M3 FilterAgent   (Haiku)  → Admisibilidad (lenguaje, duplicados, claridad)
-M8 SLAAgent      (Haiku)  → Cálculo de plazos en días hábiles (Ley 1755/2015)
-M4 SplitterAgent (Sonnet) → División de PQRSDs compuestas multi-secretaría
-M2 RouterAgent   (Sonnet) → Enrutamiento a 26 secretarías (Decreto 883/2015)
-M9 PrivacyAgent  (Sonnet) → Habeas Data y anonimización (Ley 1581/2012)
-M6 KnowledgeAgent(Sonnet) → Banco de precedentes con scoring semántico
-M5 ResponseAgent (Opus)   → Respuesta humanizada anti-alucinación
-M7 DeliveryAgent (Haiku)  → Entrega multi-canal con confirmación
+```bash
+docker compose up --build
 ```
 
-### Endpoints del pipeline
+---
 
-```http
-POST /api/v1/pqrsd/submit-pipeline/    # Radicar + procesar en un paso (ciudadano)
-POST /api/v1/pqrsd/<pk>/pipeline/      # Re-procesar una PQRSD existente (staff)
+## Servicios
+
+- http://localhost:5175/
+- http://localhost:5175/pqrsd/
+- http://localhost:5175/funcionarios/
+- http://localhost:5175/api/v1/
+
+---
+
+## Usuarios de prueba
+
+- admin / admin1234  
+- enlace1 / pqrsd2026  
+- juridico1 / pqrsd2026  
+
+---
+
+## Comandos
+
+```bash
+make help
+make setup
+make run
+make stop
+make restart
+make logs
+make test
+make migrate
+make seed
+make clean
 ```
 
-Requiere `ANTHROPIC_API_KEY` en `.env`. Si no está configurada, los endpoints devuelven `503`.
+---
 
-## Estructura del proyecto
+## Flujo
 
-```
-apps/
-  agentes/          ← 9 agentes Claude + orquestador
-  api/              ← REST API (16 endpoints)
-  clasificacion/    ← Clasificación IA con validación humana
-  conocimiento/     ← 26 dependencias + banco de precedentes
-  funcionarios/     ← Dashboard Django templates
-  pqrsd/            ← Modelo central PQRSD
-  sintesis/         ← Síntesis en 3 capas
-frontend/           ← SPA React
-config/             ← Settings Django
-Makefile            ← Comandos de desarrollo
-docker-compose.yml  ← 3 servicios: db, web, frontend
-```
+1. Ciudadano radica PQRSD  
+2. Sistema procesa  
+3. Clasificación IA  
+4. Asignación  
+5. Gestión interna  
+6. Consulta ciudadana  
 
-## Marco legal
+---
 
-- **Ley 1755/2015** — Derecho de Petición (plazos en días hábiles)
-- **Ley 1437/2011** — CPACA
-- **Ley 1581/2012** — Protección de datos personales (Habeas Data)
-- **Decreto Municipal 883/2015** — Competencias por secretaría, Alcaldía de Medellín
+## Próximas mejoras
 
-## Variables de entorno
+- Omnicanal  
+- Analítica  
+- CI/CD  
+- Roles avanzados  
 
-Ver `.env.example` para la lista completa. Las esenciales:
+---
 
-| Variable | Descripción |
-|----------|-------------|
-| `ANTHROPIC_API_KEY` | Clave API para los agentes Claude |
-| `SECRET_KEY` | Clave secreta Django (generar con `python -c "import secrets; print(secrets.token_hex(50))"`) |
-| `DEBUG` | `True` en desarrollo, `False` en producción |
-| `DB_*` | Configuración PostgreSQL |
+## Licencia
+
+Uso académico / hackathon.
