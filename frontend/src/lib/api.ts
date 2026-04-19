@@ -2,33 +2,28 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: `${import.meta.env.VITE_API_URL ?? ""}/api/v1`,
-  withCredentials: true,
   headers: { "Content-Type": "application/json" },
 });
 
-// Fetch CSRF token and set it on all requests
-let csrfFetched = false;
-api.interceptors.request.use(async (config) => {
-  if (
-    !csrfFetched &&
-    ["post", "put", "patch", "delete"].includes(config.method || "")
-  ) {
-    try {
-      const { data } = await axios.get("/api/v1/auth/csrf/", {
-        withCredentials: true,
-      });
-      api.defaults.headers.common["X-CSRFToken"] = data.csrfToken;
-      config.headers["X-CSRFToken"] = data.csrfToken;
-      csrfFetched = true;
-    } catch (_) {}
-  }
-  // Also read from cookie as fallback
-  const cookieMatch = document.cookie.match(/csrftoken=([^;]+)/);
-  if (cookieMatch) {
-    config.headers["X-CSRFToken"] = cookieMatch[1];
+// Attach token from localStorage on every request
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("auth_token");
+  if (token) {
+    config.headers.Authorization = `Token ${token}`;
   }
   return config;
 });
+
+// On 401 response, clear stored token
+api.interceptors.response.use(
+  (res) => res,
+  (err) => {
+    if (err.response?.status === 401) {
+      localStorage.removeItem("auth_token");
+    }
+    return Promise.reject(err);
+  },
+);
 
 export default api;
 

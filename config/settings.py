@@ -17,6 +17,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'crispy_bootstrap5',
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
     'apps.conocimiento',
     'apps.pqrsd',
@@ -116,6 +117,7 @@ CSRF_TRUSTED_ORIGINS = config(
 # DRF
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.SessionAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [

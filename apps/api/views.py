@@ -7,11 +7,12 @@ import logging
 from datetime import date, timedelta
 
 from django.conf import settings
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate
 from django.db.models import Count, Q
-from django.middleware.csrf import get_token
 from django.utils import timezone
-from django.views.decorators.csrf import ensure_csrf_cookie
+from django.views.decorators.csrf import csrf_exempt
+
+from rest_framework.authtoken.models import Token
 
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes, throttle_classes
@@ -78,21 +79,22 @@ def api_root(request):
 
 @api_view(['GET'])
 @permission_classes([AllowAny])
-@ensure_csrf_cookie
 def csrf_token(request):
-    """Return CSRF token so the React SPA can POST safely."""
-    return Response({'csrfToken': get_token(request)})
+    """Legacy endpoint — kept for backwards compatibility."""
+    return Response({'csrfToken': 'token-auth-enabled'})
 
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@authentication_classes([])
 def api_login(request):
     username = request.data.get('username', '')
     password = request.data.get('password', '')
     user = authenticate(request, username=username, password=password)
     if user:
-        login(request, user)
+        token, _ = Token.objects.get_or_create(user=user)
         return Response({
+            'token': token.key,
             'id': user.id,
             'username': user.username,
             'fullName': user.get_full_name() or user.username,
@@ -103,7 +105,11 @@ def api_login(request):
 
 @api_view(['POST'])
 def api_logout(request):
-    logout(request)
+    if request.user.is_authenticated and hasattr(request.user, 'auth_token'):
+        try:
+            request.user.auth_token.delete()
+        except Token.DoesNotExist:
+            pass
     return Response({'ok': True})
 
 

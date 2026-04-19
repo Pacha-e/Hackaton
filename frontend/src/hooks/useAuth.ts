@@ -8,6 +8,9 @@ export function useAuth() {
   const { data: user, isLoading } = useQuery<AuthUser>({
     queryKey: ['auth', 'me'],
     queryFn: async () => {
+      // If no token stored, skip the network call
+      const token = localStorage.getItem('auth_token')
+      if (!token) return { authenticated: false } as AuthUser
       const { data } = await authApi.me()
       return data
     },
@@ -16,15 +19,27 @@ export function useAuth() {
   })
 
   const loginMutation = useMutation({
-    mutationFn: ({ username, password }: { username: string; password: string }) =>
-      authApi.login(username, password),
+    mutationFn: async ({ username, password }: { username: string; password: string }) => {
+      const { data } = await authApi.login(username, password)
+      // Store the token returned by the backend
+      if (data.token) {
+        localStorage.setItem('auth_token', data.token)
+      }
+      return data
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['auth', 'me'] })
     },
   })
 
   const logoutMutation = useMutation({
-    mutationFn: () => authApi.logout(),
+    mutationFn: async () => {
+      try {
+        await authApi.logout()
+      } finally {
+        localStorage.removeItem('auth_token')
+      }
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['auth', 'me'] })
       qc.clear()
