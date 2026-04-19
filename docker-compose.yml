@@ -10,7 +10,7 @@ services:
     ports:
       - "5434:5432"
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -29,75 +29,18 @@ services:
       db:
         condition: service_healthy
 
-  # --- Chatwoot (rama origin/woot): variables en .env.chatwoot (no mezclar con Django) ---
-  x-chatwoot-base: &chatwoot_base
-    image: chatwoot/chatwoot:v4.0.1-ce
-    env_file:
-      - .env.chatwoot
+  frontend:
+    build: ./frontend
     volumes:
-      - chatwoot_storage:/app/storage
-
-  chatwoot_rails:
-    <<: *chatwoot_base
-    depends_on:
-      chatwoot_postgres:
-        condition: service_healthy
-      chatwoot_redis:
-        condition: service_healthy
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
     ports:
-      - "3000:3000"
+      - "5175:5173"
     environment:
-      NODE_ENV: production
-      RAILS_ENV: production
-      INSTALLATION_ENV: docker
-    entrypoint: docker/entrypoints/rails.sh
-    command: [ 'bundle', 'exec', 'rails', 's', '-p', '3000', '-b', '0.0.0.0' ]
-    restart: unless-stopped
-
-  chatwoot_sidekiq:
-    <<: *chatwoot_base
+      - VITE_API_URL=http://localhost:8090
     depends_on:
-      chatwoot_postgres:
-        condition: service_healthy
-      chatwoot_redis:
-        condition: service_healthy
-    environment:
-      NODE_ENV: production
-      RAILS_ENV: production
-      INSTALLATION_ENV: docker
-    command: [ 'bundle', 'exec', 'sidekiq', '-C', 'config/sidekiq.yml' ]
-    restart: unless-stopped
-
-  chatwoot_postgres:
-    image: pgvector/pgvector:pg16
-    restart: unless-stopped
-    volumes:
-      - chatwoot_pg_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: chatwoot_production
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: elkiko123
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
-  chatwoot_redis:
-    image: redis:alpine
-    restart: unless-stopped
-    command: [ "redis-server", "--requirepass", "elkiko123" ]
-    volumes:
-      - chatwoot_redis_data:/data
-    healthcheck:
-      test: [ "CMD", "redis-cli", "-a", "elkiko123", "ping" ]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      - web
 
 volumes:
   postgres_data:
   media_data:
-  chatwoot_pg_data:
-  chatwoot_redis_data:
-  chatwoot_storage:
