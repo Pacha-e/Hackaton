@@ -117,7 +117,7 @@ Ubicación mencionada: {ctx.ubicacion.direccion or 'No especificada'}
         if ctx.pqrsd_id:
             update_fields = {}
             if ctx.secretaria_id:
-                update_fields['dependencia_id'] = ctx.secretaria_id
+                update_fields['dependencia_asignada_id'] = ctx.secretaria_id
             if ctx.confianza_clasificacion < 0.75:
                 update_fields['estado'] = 'pendiente'
             PQRSD.objects.filter(pk=ctx.pqrsd_id).update(**update_fields)

@@ -44,7 +44,7 @@ class FilterAgent(BaseAgent):
             from datetime import date, timedelta
             hace_90_dias = date.today() - timedelta(days=90)
             candidatos = PQRSD.objects.filter(
-                created_at__date__gte=hace_90_dias,
+                fecha_radicacion__date__gte=hace_90_dias,
             ).exclude(pk=ctx.pqrsd_id).values('radicado', 'asunto', 'descripcion')[:10]
             duplicados_recientes = list(candidatos)
 

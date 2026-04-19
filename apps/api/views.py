@@ -14,9 +14,14 @@ from django.utils import timezone
 from django.views.decorators.csrf import ensure_csrf_cookie
 
 from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes, throttle_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.throttling import AnonRateThrottle
+
+
+class CitizenSubmitThrottle(AnonRateThrottle):
+    rate = '10/hour'
 
 from apps.pqrsd.models import PQRSD
 from apps.conocimiento.models import Dependencia, PrecedenteRespuesta, SyncLog
@@ -122,6 +127,7 @@ def me(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@throttle_classes([CitizenSubmitThrottle])
 def pqrsd_create(request):
     """Citizens submit a new PQRSD."""
     serializer = PQRSDCreateSerializer(data=request.data)
@@ -751,6 +757,7 @@ def pqrsd_run_pipeline(request, pk):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+@throttle_classes([CitizenSubmitThrottle])
 def pqrsd_submit_pipeline(request):
     """
     Crea y procesa una PQRSD en un solo paso (pipeline completo).
@@ -808,9 +815,9 @@ def pqrsd_submit_pipeline(request):
             'sub_radicados': [s['radicado'] for s in ctx.sub_pqrsds],
         }, status=status.HTTP_201_CREATED)
 
-    except Exception as e:
+    except Exception:
         logger.exception('[pqrsd_submit_pipeline] Error')
-        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({'error': 'Error interno procesando la solicitud.'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # ---------------------------------------------------------------------------
