@@ -27,6 +27,10 @@ urlpatterns = [
     # Staff — Synthesis
     path('pqrsd/<int:pk>/synthesis/', views.pqrsd_synthesis),
 
+    # Agentes IA — Pipeline
+    path('pqrsd/<int:pk>/pipeline/', views.pqrsd_run_pipeline),
+    path('pqrsd/submit-pipeline/', views.pqrsd_submit_pipeline),
+
     # Dashboard
     path('stats/', views.stats),
 

@@ -24,6 +24,7 @@ class PQRSD(models.Model):
         ('sugerencia', 'Sugerencia'),
         ('denuncia', 'Denuncia'),
         ('correspondencia', 'Correspondencia'),
+        ('felicitacion', 'Felicitación'),
     ]
     ESTADO_CHOICES = [
         ('radicada', 'Radicada'),
@@ -32,6 +33,7 @@ class PQRSD(models.Model):
         ('en_tramite', 'En Trámite'),
         ('respondida', 'Respondida'),
         ('cerrada', 'Cerrada'),
+        ('rechazada', 'Rechazada'),
     ]
     CANAL_CHOICES = [
         ('web', 'Portal Web'),
@@ -98,6 +100,13 @@ class PQRSD(models.Model):
 
     # Trazabilidad omnicanal (Chatwoot, etc.) — no sustituye radicado oficial
     omnicanal_meta = models.JSONField(default=dict, blank=True)
+
+    # Agentes IA — pipeline
+    observaciones_internas = models.TextField(blank=True)
+    respuesta_automatica = models.TextField(blank=True)
+    descripcion_anonimizada = models.TextField(blank=True)
+    canal_entrega = models.CharField(max_length=20, blank=True)
+    respuesta_entregada = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-fecha_radicacion']

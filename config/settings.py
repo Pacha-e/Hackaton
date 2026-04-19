@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'apps.sintesis',
     'apps.funcionarios',
     'apps.api',
+    'apps.agentes',
 ]
 
 MIDDLEWARE = [
@@ -97,6 +98,8 @@ CRISPY_TEMPLATE_PACK = 'bootstrap5'
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'funcionarios:dashboard'
 LOGOUT_REDIRECT_URL = 'login'
+
+ANTHROPIC_API_KEY = config('ANTHROPIC_API_KEY', default='')
 
 # CORS — allow React dev server
 CORS_ALLOWED_ORIGINS = config(

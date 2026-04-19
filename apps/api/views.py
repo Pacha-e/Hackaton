@@ -650,6 +650,126 @@ def choices(request):
 
 
 # ---------------------------------------------------------------------------
+# AGENTES IA — Pipeline completo
+# ---------------------------------------------------------------------------
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def pqrsd_run_pipeline(request, pk):
+    """
+    Ejecuta el pipeline completo de agentes IA sobre una PQRSD existente.
+    Staff-only. Responde con el PipelineContext final.
+    """
+    try:
+        pqrsd = PQRSD.objects.get(pk=pk)
+    except PQRSD.DoesNotExist:
+        return Response({'error': 'PQRSD no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+
+    if not getattr(settings, 'ANTHROPIC_API_KEY', ''):
+        return Response(
+            {'error': 'ANTHROPIC_API_KEY no configurada. Pipeline IA no disponible.'},
+            status=status.HTTP_503_SERVICE_UNAVAILABLE,
+        )
+
+    try:
+        from apps.agentes.orchestrator import procesar_pqrsd
+        from dataclasses import asdict
+
+        ctx = procesar_pqrsd(
+            canal=pqrsd.canal_entrada,
+            descripcion=pqrsd.descripcion,
+            pqrsd_id=pqrsd.pk,
+            radicado=pqrsd.radicado,
+            nombre=pqrsd.nombre_ciudadano,
+            email=pqrsd.email_ciudadano,
+            telefono=pqrsd.telefono_ciudadano,
+            documento=pqrsd.documento_ciudadano,
+            anonimo=pqrsd.anonimo,
+            barrio=pqrsd.barrio or '',
+            comuna=pqrsd.comuna or '',
+        )
+
+        return Response({
+            'ok': True,
+            'radicado': ctx.radicado,
+            'admisible': ctx.admisible,
+            'motivo_rechazo': ctx.motivo_rechazo,
+            'secretaria_asignada': ctx.secretaria_asignada,
+            'confianza': ctx.confianza_clasificacion,
+            'requiere_revision_humana': ctx.requiere_revision_humana,
+            'dividida': ctx.dividida,
+            'sub_pqrsds': ctx.sub_pqrsds,
+            'respuesta_generada': ctx.respuesta_generada,
+            'respuesta_texto': ctx.respuesta_texto,
+            'entregada': ctx.entregada,
+            'canal_exitoso': ctx.canal_exitoso,
+            'fecha_limite': ctx.fecha_limite,
+            'dias_restantes': ctx.dias_restantes,
+            'estado_sla': ctx.estado_sla,
+            'pii_detectada': ctx.pii_detectada,
+            'agentes_ejecutados': ctx.agentes_ejecutados,
+            'errores': ctx.errores,
+        })
+    except Exception as e:
+        logger.exception(f'[pqrsd_run_pipeline] Error procesando PQRSD {pk}')
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def pqrsd_submit_pipeline(request):
+    """
+    Crea y procesa una PQRSD en un solo paso (pipeline completo).
+    Canal ciudadano — no requiere autenticación.
+    """
+    if not getattr(settings, 'ANTHROPIC_API_KEY', ''):
+        # Fallback al submit estándar sin IA
+        return pqrsd_create(request)
+
+    required = ['descripcion_raw', 'canal']
+    for f in required:
+        if not request.data.get(f):
+            return Response({'error': f'Campo requerido: {f}'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        from apps.agentes.orchestrator import procesar_pqrsd
+
+        ctx = procesar_pqrsd(
+            canal=request.data.get('canal', 'web'),
+            descripcion=request.data.get('descripcion_raw', ''),
+            nombre=request.data.get('nombre', ''),
+            email=request.data.get('email', ''),
+            telefono=request.data.get('telefono', ''),
+            documento=request.data.get('documento', ''),
+            anonimo=request.data.get('anonimo', False),
+            barrio=request.data.get('barrio', ''),
+            comuna=request.data.get('comuna', ''),
+        )
+
+        if not ctx.admisible:
+            return Response({
+                'admisible': False,
+                'motivo': ctx.motivo_rechazo,
+                'mensaje': ctx.notificacion_ciudadano,
+            }, status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+
+        return Response({
+            'ok': True,
+            'radicado': ctx.radicado,
+            'admisible': True,
+            'secretaria_asignada': ctx.secretaria_asignada,
+            'fecha_limite': ctx.fecha_limite,
+            'respuesta': ctx.respuesta_texto,
+            'dividida': ctx.dividida,
+            'sub_radicados': [s['radicado'] for s in ctx.sub_pqrsds],
+        }, status=status.HTTP_201_CREATED)
+
+    except Exception as e:
+        logger.exception('[pqrsd_submit_pipeline] Error')
+        return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+# ---------------------------------------------------------------------------
 # STAFF — SYNC MEDATA
 # ---------------------------------------------------------------------------
 
