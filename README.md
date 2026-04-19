@@ -66,19 +66,21 @@ La respuesta JSON del webhook incluye `radicado`, `clasificacion` (sugerencia IA
 
 Más contexto: `CLAUDE.md` en la raíz del repositorio.
 
-## Publicar todo en una rama `main` (no existe en el remoto aún)
+## Rama principal del repo: `feature/mvp-inicial`
 
-En el repo solo hay `feature/*`, `fix/*`, `woot`, etc. Para tener **`main`** con lo que llevas en `feature/ambiente-reparado`:
+En `origin`, la rama por defecto es **`feature/mvp-inicial`** (no hay `main`). Ahí es donde conviene integrar el trabajo estable.
+
+Para traer cambios de otra rama (p. ej. `feature/ambiente-reparado`) a la principal:
 
 ```powershell
 cd C:\Users\EMMANUEL\hackathon
-git checkout feature/ambiente-reparado
-git pull
-git checkout -b main
-git push -u origin main
+git checkout feature/mvp-inicial
+git pull origin feature/mvp-inicial
+git merge feature/ambiente-reparado
+git push origin feature/mvp-inicial
 ```
 
-Luego en GitHub/GitLab puedes definir `main` como rama por defecto si lo deseas.
+Si aparecen conflictos, resuélvelos, `git add` los archivos y `git commit` para terminar el merge.
 
 ## Si Chatwoot sigue en error
 
